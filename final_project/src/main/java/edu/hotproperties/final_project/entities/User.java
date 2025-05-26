@@ -1,9 +1,11 @@
 package edu.hotproperties.final_project.entities;
 
 
+import edu.hotproperties.final_project.emuns.Role;
+
 import jakarta.persistence.*;
 
-import java.security.Timestamp;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,7 +36,7 @@ public class User {
     private Set<Role> roles = new HashSet<>();
 
     @Column(nullable = false)
-    private Timestamp createdAt;
+    private LocalDateTime  createdAt;
 
     public User() {}
 
@@ -46,11 +48,11 @@ public class User {
         this.roles = roles;
     }
 
-    public Timestamp getCreatedAt() {
+    public LocalDateTime  getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
+    public void setCreatedAt(LocalDateTime  createdAt) {
         this.createdAt = createdAt;
     }
 
