@@ -3,7 +3,7 @@ package edu.hotproperties.final_project.dtos;
 
 public class LoginRequest {
 
-    private String username;
+    private String email;
 
     private String password;
 
@@ -12,18 +12,18 @@ public class LoginRequest {
     }
 
     // Parameterized constructor
-    public LoginRequest(String username, String password) {
-        this.username = username;
+    public LoginRequest(String email, String password) {
+        this.email = email;
         this.password = password;
     }
 
     // Getter and Setter methods
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {
