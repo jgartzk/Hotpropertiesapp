@@ -14,4 +14,6 @@ public interface AuthService {
 
     void clearJwtCookie(HttpServletResponse response);
 
+    User getCurrentUser();
+
 }
