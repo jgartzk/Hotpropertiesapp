@@ -60,6 +60,7 @@ public class AuthServiceImpl implements AuthService {
         return jwtCookie;
     }
 
+    @Override
     public User getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
