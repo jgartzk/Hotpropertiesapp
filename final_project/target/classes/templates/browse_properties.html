@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+
+<html xmlns:sec="https://www.thymeleaf.org/extras/spring-security" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>User Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}"/>
+</head>
+<body>
+<div class="login-container">
+    <p style="text-align: right; margin-top: 15px;">
+        <button onclick="location.href='/dashboard'" class="button">Dashboard</button>
+    </p>
+</div>
+
+<div class="login-container">
+    <h1 th:text="'Hello, ' + ${user.firstName} + ' ' + ${user.lastName} + '!'">Hello!</h1>
+    <p class="profile-table">Welcome to your dashboard.</p>
+    <ul class="no-bullets">
+
+    </ul>
+</div>
+</body>
+</html>
