@@ -1,8 +1,11 @@
 package edu.hotproperties.final_project.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -27,6 +30,10 @@ public class Property {
 
     @Column(nullable = false)
     private Integer size;
+
+    @ManyToMany(mappedBy = "properties")
+    @JsonIgnore
+    private List<Favorite> favorites = new ArrayList<>();
 
     public Property() {}
 
@@ -84,5 +91,13 @@ public class Property {
 
     public void setSize(Integer size) {
         this.size = size;
+    }
+
+    public void setFavorites(List<Favorite> favorites) {
+        this.favorites = favorites;
+    }
+
+    public List<Favorite> getFavorites() {
+        return favorites;
     }
 }
