@@ -22,6 +22,10 @@ public interface UserService {
     @PreAuthorize("hasRole('Buyer')")
     List<Property> getFavorites(User user);
 
+    User registerNewUser(User user, List<String> roleNames);
+
+    User getCurrentUser();
+
     @PreAuthorize("hasRole('Agent')")
     void createProperty(Property property);
 
