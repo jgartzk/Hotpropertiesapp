@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,9 +60,11 @@ public class UserServiceImpl implements UserService {
         return propertyRepository.findAllByOrderByPriceDesc();
     }
 
+    //Maybe get by property id instead?
     @Override
     public Property getProperty(String title) {
         Property property = propertyRepository.findByTitle(title);
+        //TODO: if not found throw PropertyNotFound Exception
         return property;
     }
 
@@ -71,31 +74,83 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Property> getManagedProperties(User user) {
-        //TODO get all properties where user is agent
-        List<Property> managedProperties = propertyRepository.findAllByAgent(user);
-        return managedProperties;
+    public void createProperty(Property property) {
+        //Validate property, int must be positive and string must not be empty
+        if (property.getPrice() > 0 &&
+            property.getSize() > 0 &&
+            !property.getTitle().isEmpty() &&
+            !property.getLocation().isEmpty() &&
+            !property.getDescription().isEmpty()
+        ) {
+            propertyRepository.save(property);
+        }
+        //TODO: else throw InvalidPropertyException
     }
 
     @Override
-    public Property addProperty(Property property) {
-        //TODO: Validate property
-        return propertyRepository.save(property);
+    public void updateProperty(Long id, Property updatedProperty) {
+        //Get existing property from db
+        Property property = propertyRepository.getById(id);
+        //TODO: if property==null throw PropertyNotFound
+
+        //update with changes
+        property.setTitle(updatedProperty.getTitle());
+        property.setPrice(updatedProperty.getPrice());
+        property.setDescription(updatedProperty.getDescription());
+        property.setLocation(updatedProperty.getLocation());
+        property.setSize(updatedProperty.getSize());
+
+        //save changes
+        propertyRepository.save(property);
     }
 
     @Override
-    public Property updateProperty(Property property) {
-        Property updatedProperty = propertyRepository.getById(property.getId());
-        //TODO: Error if property not found
-        //TODO: Update Property
-        return updatedProperty;
+    public void prepareManagedListingsModel(User agent, Model model) {
+        List<Property> properties = propertyRepository.findAllByAgent(agent);
+        model.addAttribute("properties", properties);
     }
 
     @Override
-    public Message messageReply(Message message) {
-        Message updatedMessage = messageRepository.getById(message.getId());
-        //TODO: Error if property not found
-        //TODO: Update Message with reply
-        return updatedMessage;
+    public void prepareViewMessageModel(Long id, Model model) {
+        //Get message by id and return it to model
+        Message message = messageRepository.getById(id);
+        model.addAttribute("message", message);
+    }
+
+    @Override
+    public void prepareEditPropertyModel(Long id, Model model){
+        Property property = propertyRepository.getById(id);
+        model.addAttribute("property", property);
+    }
+
+    @Override
+    public void postMessageReply(Long id, String reply) {
+        //Get message w/o reply
+        Message message = messageRepository.getById(id);
+        //Set reply
+        message.setReply(reply);
+        //Save message with reply to db
+        messageRepository.save(message);
+    }
+
+    //Gets all messages and adds them to model
+    @Override
+    public void prepareMessagesModel(Model model) {
+        List<Message> messages = new ArrayList<Message>();
+
+        //Get current user (Agent)
+        User currentUser = getCurrentUserContext().user();
+
+        //For all properties managed by agent
+        List<Property> properties = propertyRepository.findAllByAgent(currentUser);
+        for (Property property : properties) {
+            //If message exists at property, add to the model
+            if (messageRepository.existsByProperty(property)) {
+               messages.add(messageRepository.getByProperty(property));
+
+            }
+        }
+        //Add all messages to model
+        model.addAttribute("messages", messages);
     }
 }

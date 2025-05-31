@@ -23,15 +23,26 @@ public interface UserService {
     List<Property> getFavorites(User user);
 
     @PreAuthorize("hasRole('Agent')")
-    List<Property> getManagedProperties(User user);
+    void createProperty(Property property);
 
     @PreAuthorize("hasRole('Agent')")
-    Property addProperty(Property property);
+    void updateProperty(Long id, Property property);
 
     @PreAuthorize("hasRole('Agent')")
-    Property updateProperty(Property property);
+    void prepareEditPropertyModel(Long id, Model model);
 
     @PreAuthorize("hasRole('Agent')")
-    Message messageReply(Message message);
+    void prepareManagedListingsModel(User agent, Model model);
+
+    @PreAuthorize("hasRole('Agent')")
+    void prepareMessagesModel(Model model);
+
+    @PreAuthorize("hasRole('Agent')")
+    void prepareViewMessageModel(Long id, Model model);
+
+    @PreAuthorize("hasRole('Agent')")
+    void postMessageReply(Long id, String reply);
+
+
 }
 
