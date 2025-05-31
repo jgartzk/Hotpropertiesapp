@@ -22,6 +22,13 @@ public interface UserService {
     @PreAuthorize("hasRole('Buyer')")
     List<Property> getFavorites(User user);
 
+
+    User registerNewUser(User user, List<String> roleNames);
+
+
+
+    User getCurrentUser();
+
     @PreAuthorize("hasRole('Agent')")
     List<Property> getManagedProperties(User user);
 
@@ -33,5 +40,6 @@ public interface UserService {
 
     @PreAuthorize("hasRole('Agent')")
     Message messageReply(Message message);
+
 }
 

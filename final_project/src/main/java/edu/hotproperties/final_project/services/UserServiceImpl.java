@@ -1,7 +1,11 @@
 package edu.hotproperties.final_project.services;
 
+
+import edu.hotproperties.final_project.emuns.Role;
+
 import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import edu.hotproperties.final_project.entities.Message;
+
 import edu.hotproperties.final_project.entities.Property;
 import edu.hotproperties.final_project.entities.User;
 import edu.hotproperties.final_project.repository.FavoriteRepository;
@@ -17,7 +21,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
 import java.util.List;
+
+import java.util.Set;
+import java.util.stream.Collectors;
+
+
+
 import java.util.Optional;
+
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -38,6 +49,35 @@ public class UserServiceImpl implements UserService {
         this.propertyRepository = propertyRepository;
         this.messageRepository = messageRepository;
     }
+
+    @Override
+    public User getCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
+    }
+
+
+    @Override
+    public User registerNewUser(User user, List<String> roleNames) {
+        Set<Role> roles = roleNames.stream()
+                .map(roleName ->{
+                    try{
+                        return Role.valueOf(roleName.toUpperCase());
+                    } catch (IllegalArgumentException e){
+                        throw new RuntimeException(" Role used is not valid");
+                    }
+                })
+                .collect(Collectors.toSet());
+
+        user.setRoles(roles);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+        return user;
+    }
+
+
 
     private CurrentUserContext getCurrentUserContext() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
