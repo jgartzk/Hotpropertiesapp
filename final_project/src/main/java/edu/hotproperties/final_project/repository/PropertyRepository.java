@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface PropertyRepository extends JpaRepository<Property, Long> {
-    List<Property> findAllByPriceDesc();
+    List<Property> findAllByOrderByPriceDesc();
 
     Property findByTitle(String title);
 }

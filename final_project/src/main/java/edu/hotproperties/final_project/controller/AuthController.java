@@ -3,13 +3,17 @@ package edu.hotproperties.final_project.controller;
 import edu.hotproperties.final_project.entities.Property;
 import edu.hotproperties.final_project.services.AuthService;
 import edu.hotproperties.final_project.services.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import edu.hotproperties.final_project.entities.User;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -18,9 +22,66 @@ public class AuthController {
     private final AuthService authService;
     private final UserService userService;
 
-    public AuthController(AuthService authService, UserService userService) {
+    public AuthController( AuthService authService, UserService userService) {
         this.authService = authService;
         this.userService = userService;
+    }
+
+    @GetMapping({"/", "/index"})
+    public String showIndex() {
+        return "index";
+    }
+
+    @GetMapping("/login")
+    public String showLoginForm(Model model) {
+        model.addAttribute("user", new User());
+        return "login";
+    }
+
+    @PostMapping("/login")
+    public String processLogin(@ModelAttribute("user") User user,
+                               HttpServletResponse response,
+                               Model model) {
+        try {
+            Cookie jwtCookie = authService.loginAndCreateJwtCookie(user);
+            response.addCookie(jwtCookie);
+            return "redirect:/dashboard";
+        } catch (BadCredentialsException e) {
+            model.addAttribute("error", "Invalid email or password");
+            return "login";
+        }
+    }
+
+    @GetMapping("/logout")
+    @PreAuthorize("isAuthenticated()")
+    public String logout(HttpServletResponse response) {
+        authService.clearJwtCookie(response);
+        return "redirect:/login";
+    }
+
+    @GetMapping("/register")
+    public String showRegisterForm(Model model) {
+        model.addAttribute("user", new User());
+        return "register";
+    }
+
+    @PostMapping("/register")
+    public String registerUser(@ModelAttribute("user") User user,
+                               @RequestParam("selectedRoles") List<String> roleNames,
+                               @RequestParam(value = "file", required = false) MultipartFile file,
+                               RedirectAttributes redirectAttributes) {
+        try {
+            // First, register the user (this will assign them an ID)
+            User savedUser = userService.registerNewUser(user, roleNames);
+
+            redirectAttributes.addFlashAttribute("successMessage", "Registration successful.");
+            return "redirect:/login";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "Registration failed: " + e.getMessage());
+            return "redirect:/register";
+        }
     }
 
     @GetMapping("/dashboard")
