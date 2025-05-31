@@ -6,7 +6,9 @@ import edu.hotproperties.final_project.emuns.Role;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -39,6 +41,9 @@ public class User {
 
     @Column(nullable = false)
     private LocalDateTime  createdAt;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Property> favorites = new ArrayList<>();
 
     public User() {}
 

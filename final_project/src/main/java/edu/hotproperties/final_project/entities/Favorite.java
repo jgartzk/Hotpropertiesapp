@@ -1,8 +1,10 @@
 package edu.hotproperties.final_project.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "favorties")
@@ -13,24 +15,24 @@ public class Favorite {
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Property property;
+    @ManyToMany
+    @JoinTable(
+            name = "favorite_property",
+            joinColumns = @JoinColumn(name = "favorite_id"),
+            inverseJoinColumns = @JoinColumn(name = "property_id")
+    )
+    private List<Property> properties;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
     public Favorite() {}
 
-    public Favorite(User user, Property property) {
-        this.user = user;
-        this.property = property;
-    }
-
-    public Favorite(User user, Property property, LocalDateTime createdAt) {
-        this.user = user;
-        this.property = property;
+    public Favorite(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -50,12 +52,12 @@ public class Favorite {
         this.user = user;
     }
 
-    public Property getProperty() {
-        return property;
+    public List<Property> getProperties() {
+        return properties;
     }
 
-    public void setProperty(Property property) {
-        this.property = property;
+    public void setProperty(List<Property> properties) {
+        this.properties = properties;
     }
 
     public LocalDateTime getCreatedAt() {

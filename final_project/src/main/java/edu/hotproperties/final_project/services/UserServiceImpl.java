@@ -1,9 +1,15 @@
 package edu.hotproperties.final_project.services;
 
+
 import edu.hotproperties.final_project.emuns.Role;
+
+import com.fasterxml.jackson.databind.annotation.JsonAppend;
+import edu.hotproperties.final_project.entities.Message;
+
 import edu.hotproperties.final_project.entities.Property;
 import edu.hotproperties.final_project.entities.User;
 import edu.hotproperties.final_project.repository.FavoriteRepository;
+import edu.hotproperties.final_project.repository.MessageRepository;
 import edu.hotproperties.final_project.repository.PropertyRepository;
 import edu.hotproperties.final_project.repository.UserRepository;
 import edu.hotproperties.final_project.utils.CurrentUserContext;
@@ -15,9 +21,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
 import java.util.List;
+
 import java.util.Set;
 import java.util.stream.Collectors;
 
+
+
+import java.util.Optional;
 
 
 @Service
@@ -26,12 +36,18 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final FavoriteRepository favoriteRepository;
     private final PropertyRepository propertyRepository;
+    private final MessageRepository messageRepository;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, FavoriteRepository favoriteRepository, PropertyRepository propertyRepository) {
+    public UserServiceImpl(UserRepository userRepository,
+                           PasswordEncoder passwordEncoder,
+                           FavoriteRepository favoriteRepository,
+                           PropertyRepository propertyRepository,
+                           MessageRepository messageRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.favoriteRepository = favoriteRepository;
         this.propertyRepository = propertyRepository;
+        this.messageRepository = messageRepository;
     }
 
     @Override
@@ -92,5 +108,34 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<Property> getFavorites(User user){
         return favoriteRepository.findAllByUser(user);
+    }
+
+    @Override
+    public List<Property> getManagedProperties(User user) {
+        //TODO get all properties where user is agent
+        List<Property> managedProperties = propertyRepository.findAllByAgent(user);
+        return managedProperties;
+    }
+
+    @Override
+    public Property addProperty(Property property) {
+        //TODO: Validate property
+        return propertyRepository.save(property);
+    }
+
+    @Override
+    public Property updateProperty(Property property) {
+        Property updatedProperty = propertyRepository.getById(property.getId());
+        //TODO: Error if property not found
+        //TODO: Update Property
+        return updatedProperty;
+    }
+
+    @Override
+    public Message messageReply(Message message) {
+        Message updatedMessage = messageRepository.getById(message.getId());
+        //TODO: Error if property not found
+        //TODO: Update Message with reply
+        return updatedMessage;
     }
 }
