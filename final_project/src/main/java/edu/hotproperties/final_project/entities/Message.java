@@ -1,5 +1,6 @@
 package edu.hotproperties.final_project.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.springframework.cglib.core.Local;
 
@@ -20,7 +21,8 @@ public class Message {
     private String reply;
 
     @ManyToOne
-    @Column(nullable = false)
+    @JoinColumn(name = "message_id")
+    @JsonIgnore
     private Property property;
 
     @ManyToOne

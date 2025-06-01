@@ -1,5 +1,6 @@
 package edu.hotproperties.final_project.services;
 
+import edu.hotproperties.final_project.entities.Favorite;
 
 import edu.hotproperties.final_project.emuns.Role;
 
@@ -8,7 +9,10 @@ import edu.hotproperties.final_project.entities.Message;
 
 import edu.hotproperties.final_project.entities.Property;
 import edu.hotproperties.final_project.entities.User;
+import edu.hotproperties.final_project.exceptions.*;
 import edu.hotproperties.final_project.repository.FavoriteRepository;
+import edu.hotproperties.final_project.emuns.Role;
+import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import edu.hotproperties.final_project.repository.MessageRepository;
 import edu.hotproperties.final_project.repository.PropertyRepository;
 import edu.hotproperties.final_project.repository.UserRepository;
@@ -19,6 +23,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.Optional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,6 +121,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+
+    public Favorite removeFavorite(Favorite favorite) {
+        Favorite temp = favorite;
+        if(favoriteExists(favorite.getUser(), favorite.getProperty()))
+            throw new NotFoundException("Favorite doesn't exist: " + favorite.getProperty());
+        favoriteRepository.delete(favorite);
+        return temp;
+    }
+
+    @Override
+    public Favorite addFavorite(Favorite favorite) {
+        validFavorite(favorite);
+        favoriteRepository.save(favorite);
+        return favorite;
+    }
+
     public void createProperty(Property property) {
         //Validate property, int must be positive and string must not be empty
         if (property.getPrice() > 0 &&
@@ -175,7 +198,13 @@ public class UserServiceImpl implements UserService {
 
     //Gets all messages and adds them to model
     @Override
-    public void prepareMessagesModel(Model model) {
+    public void prepareViewMessageModel(Long id, Model model) {
+        //Get message by id and return it to model
+        Message message = messageRepository.getById(id);
+        model.addAttribute("message", message);
+    }
+  
+  public void prepareMessagesModel(Model model) {
         List<Message> messages = new ArrayList<Message>();
 
         //Get current user (Agent)
@@ -193,4 +222,147 @@ public class UserServiceImpl implements UserService {
         //Add all messages to model
         model.addAttribute("messages", messages);
     }
+
+    //////////////////////////////////////////////////////
+    /// Validation Methods
+    ///////////////////////////////////////////////////////
+
+    public void validFavorite(Favorite favorite) {
+        if (favorite.getUser() == null) {
+            throw new InvalidFavoriteParameterException("User is null");
+        }
+        else if(!userRepository.existsByEmail(favorite.getUser().getEmail())) {
+            throw new InvalidFavoriteParameterException("User not found");
+        }
+
+        validUser(favorite.getUser());
+
+        if (favorite.getProperty() == null) {
+            throw new InvalidFavoriteParameterException("Property is null");
+        }
+        else if(!propertyRepository.existsByTitle(favorite.getProperty().getTitle())) {
+            throw new InvalidFavoriteParameterException("Property not found");
+        }
+
+        validProperty(favorite.getProperty());
+
+    }
+
+    public void validUser(User user) {
+        validName(user.getFirstName(), user.getLastName());
+        validEmail(user.getEmail());
+        validPassword(user.getPassword());
+    }
+
+    public void validProperty(Property property) {
+        validTitle(property.getTitle());
+        validPrice(property.getPrice());
+        validDescription(property.getDescription());
+        validLocation(property.getLocation());
+        validSize(property.getSize());
+    }
+
+    public void validMessage(Message message) {
+        validContent(message.getContent());
+        validProperty(message.getProperty());
+        userExists(message.getSender().getEmail());
+    }
+
+    public void userExists(String email) {
+        if(!userRepository.existsByEmail(email)){
+            throw new UsernameNotFoundException("User not found");
+        }
+    }
+
+    public boolean favoriteExists(User user, Property property) {
+        if(favoriteRepository.findByUserAndProperty(user, property) != null)
+            return true;
+        return false;
+    }
+
+
+    public void validContent(String content){
+        if(content == null){
+            throw new InvalidMessageParameterException("Content is null");
+        }
+        else if(content.trim().equals("")){
+            throw new InvalidMessageParameterException("Content is empty");
+        }
+    }
+
+    public void validTitle(String title) {
+        if (title == null) {
+            throw new InvalidPropertyParameterException("Title is null");
+        }
+        else if(title.trim().equals("")){
+            throw new InvalidPropertyParameterException("Title is empty");
+        }
+    }
+
+    public void validPrice(double price) {
+        if (price <= 0) {
+            throw new InvalidPropertyParameterException("Price must be greater than 0");
+        }
+    }
+
+    public void validDescription(String description) {
+        if(description == null) {
+            throw new InvalidPropertyParameterException("Description is null");
+        }
+        else if(description.trim().equals("")) {
+            throw new InvalidPropertyParameterException("Description is empty");
+        }
+    }
+
+    public void validLocation(String location) {
+        if(location == null) {
+            throw new InvalidPropertyParameterException("Location is null");
+        }
+        else if(location.trim().equals("")) {
+            throw new InvalidPropertyParameterException("Location is empty");
+        }
+    }
+
+    public void validSize(Integer size) {
+        if (size == null) {
+            throw new InvalidPropertyParameterException("Size is null");
+        }
+        else if (size <= 0) {
+            throw new InvalidPropertyParameterException("Size must be greater than 0");
+        }
+    }
+
+    public void validName(String firstName, String lastName) {
+        if(firstName == null || lastName == null) {
+            throw new InvalidUserParameterException("Name is null");
+        }
+        else if(firstName.trim().equals("") || lastName.trim().equals("")) {
+            throw new InvalidUserParameterException("Name is empty");
+        }
+    }
+
+    public void validEmail(String email) {
+        if(email == null) {
+            throw new InvalidUserParameterException("Email is null");
+        }
+        else if(email.trim().equals("")) {
+            throw new InvalidUserParameterException("Email is empty");
+        }
+
+        if(!email.contains("@")) {
+            throw new InvalidUserParameterException("Email is not a valid email");
+        }
+        else if(!(email.charAt(email.length() - 4) == '.')) {
+            throw new InvalidUserParameterException("Email is not a valid email");
+        }
+    }
+
+    public void validPassword(String password) {
+        if(password == null) {
+            throw new InvalidUserParameterException("Password is null");
+        }
+        else if(password.trim().equals("")) {
+            throw new InvalidUserParameterException("Password is empty");
+        }
+   
 }

@@ -112,7 +112,8 @@ public class AuthController {
     @PreAuthorize("hasRole('BUYER')")
     public String favorites(Model model) {
         User current = authService.getCurrentUser();
-        model.addAttribute("properties", current);
+        List<Property> favorites = userService.getFavorites(current);
+        model.addAttribute("properties", favorites);
         return "favorites";
     }
 
@@ -128,28 +129,30 @@ public class AuthController {
 
     //Post new property
     @PostMapping("/properties/add")
-    @PreAuthorize("hasRole('AGENT'")
+
+    @PreAuthorize("hasRole('AGENT')")
     public String createProperty(@RequestBody Property property) {
         userService.createProperty(property);
         return "new_property";
     }
 
     //Get existing property by id and update it
-    @PostMapping("/properties/edit")
-    @PreAuthorize("hasRole('AGENT'")
+
+  @PostMapping("/properties/edit")
+    @PreAuthorize("hasRole('AGENT')")
     public void editProperty(@RequestParam(name="id") Long id, @ModelAttribute("property") Property property) {
         userService.updateProperty(id, property); //returns updated property
     }
 
     @GetMapping("/properties/edit")
-    @PreAuthorize("hasRole('AGENT'")
+    @PreAuthorize("hasRole('AGENT')")
     public void prepareEditPropertyModel(@RequestParam(name="id") Long id, Model model) {
         userService.prepareEditPropertyModel(id, model); //returns updated property
     }
 
     //Returns a list of properties managed by the agent (current user)
     @GetMapping("/properties/manage")
-    @PreAuthorize("hasRole('AGENT'")
+ @PreAuthorize("hasRole('AGENT')")
     public String getManagedProperties(Model model) {
         User agent = authService.getCurrentUser();
         userService.prepareManagedListingsModel(agent, model);
@@ -173,6 +176,59 @@ public class AuthController {
         userService.prepareViewMessageModel(id, model);
         return "view_message";
     }
+
+    //Get all messages for Agent
+    @GetMapping("/messages")
+    @PreAuthorize("hasRole('AGENT')")
+    public String getMessages(Model model) {
+        //User service adds Agent's list of messages to the model
+        userService.prepareMessagesModel(model);
+        return "messages";
+    }
+
+    //Agent replies to buyer messages
+    @GetMapping("/message")
+    @PreAuthorize("hasRole('AGENT')")
+    public String viewMessage(@RequestParam(name="id") Long id, Model model) {
+        //User adds sender info and message to screen
+        userService.prepareViewMessageModel(id, model);
+        return "view_message";
+    }
+
+    //Agent replies to buyer messages
+    @PostMapping("/message")
+    @PreAuthorize("hasRole('AGENT')")
+    public String viewMessage(@RequestParam(name="id") Long id, @RequestBody String reply) {
+        //User adds sender info and message to screen
+        userService.postMessageReply(id, reply);
+        return "view_message";
+    }
+
+    //Get all messages for Agent
+    @GetMapping("/messages")
+    @PreAuthorize("hasRole('AGENT')")
+    public String getMessages(Model model) {
+        //User service adds Agent's list of messages to the model
+        userService.prepareMessagesModel(model);
+        return "messages";
+    }
+
+    //Agent replies to buyer messages
+    @GetMapping("/message")
+    @PreAuthorize("hasRole('AGENT')")
+    public String viewMessage(@RequestParam(name="id") Long id, Model model) {
+        //User adds sender info and message to screen
+        userService.prepareViewMessageModel(id, model);
+        return "view_message";
+    }
+
+    //Agent replies to buyer messages
+    @PostMapping("/message")
+    @PreAuthorize("hasRole('AGENT')")
+    public String viewMessage(@RequestParam(name="id") Long id, @RequestBody String reply) {
+        //User adds sender info and message to screen
+        userService.postMessageReply(id, reply);
+        return "view_message";
 
     //Agent replies to buyer messages
     @PostMapping("/message")
