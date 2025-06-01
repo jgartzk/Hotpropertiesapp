@@ -46,6 +46,11 @@ public class Property {
     @JsonIgnore
     private User listedBy;
 
+    @ManyToOne
+    @JoinColumn(name = "agent_id")
+    private User agent;
+    //Alan addition. added hoping  this would fix the error in the code. may not be nbeeded but keeping now so code is runnable for testing pages
+
     public Property() {}
 
     public Property(String title, double price, String description, String location, Integer size) {

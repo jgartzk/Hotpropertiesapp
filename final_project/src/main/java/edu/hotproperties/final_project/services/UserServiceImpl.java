@@ -121,7 +121,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-
     public Favorite removeFavorite(Favorite favorite) {
         Favorite temp = favorite;
         if(favoriteExists(favorite.getUser(), favorite.getProperty()))
@@ -196,13 +195,6 @@ public class UserServiceImpl implements UserService {
         messageRepository.save(message);
     }
 
-    //Gets all messages and adds them to model
-    @Override
-    public void prepareViewMessageModel(Long id, Model model) {
-        //Get message by id and return it to model
-        Message message = messageRepository.getById(id);
-        model.addAttribute("message", message);
-    }
   
   public void prepareMessagesModel(Model model) {
         List<Message> messages = new ArrayList<Message>();
@@ -365,4 +357,4 @@ public class UserServiceImpl implements UserService {
             throw new InvalidUserParameterException("Password is empty");
         }
    
-}
+}}

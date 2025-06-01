@@ -26,8 +26,15 @@ public class Message {
     private Property property;
 
     @ManyToOne
-    @Column(nullable = false)
+    @JoinColumn(name = "sender_id")
     private User sender;
+
+    @ManyToOne
+    @JoinColumn(name = "agent_id")
+    private User agent;
+//Alan addition. added hoping  this would fix the error in the code. may not be nbeeded but keeping now so code is runnable for testing pages
+
+
 
     @Column(nullable = false)
     private LocalDateTime timestamp;

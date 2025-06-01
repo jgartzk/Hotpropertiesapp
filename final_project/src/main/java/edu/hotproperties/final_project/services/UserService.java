@@ -45,8 +45,8 @@ public interface UserService {
     @PreAuthorize("hasRole('Agent')")
     void prepareViewMessageModel(Long id, Model model);
 
-    @PreAuthorize("hasRole('Agent')")
-    Message messageReply(Message message);
+//    @PreAuthorize("hasRole('Agent')")
+//    Message messageReply(Message message);
 
     @PreAuthorize("hasRole('BUYER')")
     Favorite removeFavorite(Favorite favorite);
@@ -54,9 +54,9 @@ public interface UserService {
     @PreAuthorize("hasRole('BUYER')")
     Favorite addFavorite(Favorite favorite);
 
-    void prepareManagedListingsModel(User agent, Model model);
 
-    void prepareViewMessageModel(Long id, Model model);
+
+
     void postMessageReply(Long id, String reply);
 
 }
