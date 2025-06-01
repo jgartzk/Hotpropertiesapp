@@ -1,5 +1,6 @@
 package edu.hotproperties.final_project.services;
 
+import edu.hotproperties.final_project.entities.Favorite;
 import edu.hotproperties.final_project.entities.Message;
 import edu.hotproperties.final_project.entities.Property;
 import edu.hotproperties.final_project.entities.User;
@@ -16,11 +17,17 @@ public interface UserService {
     @PreAuthorize("hasRole('BUYER')")
     List<Property> getProperties();
 
-    @PreAuthorize("hasRole('BUYER','Agent')")
+    @PreAuthorize("hasAnyRole('BUYER','Agent')")
     Property getProperty(String title);
 
-    @PreAuthorize("hasRole('Buyer')")
+    @PreAuthorize("hasRole('BUYER')")
     List<Property> getFavorites(User user);
+
+    @PreAuthorize("hasRole('BUYER')")
+    Favorite removeFavorite(Favorite favorite);
+
+    @PreAuthorize("hasRole('BUYER')")
+    Favorite addFavorite(Favorite favorite);
 
     @PreAuthorize("hasRole('Agent')")
     List<Property> getManagedProperties(User user);

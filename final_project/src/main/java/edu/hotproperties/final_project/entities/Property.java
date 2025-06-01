@@ -31,9 +31,20 @@ public class Property {
     @Column(nullable = false)
     private Integer size;
 
-    @ManyToMany(mappedBy = "properties")
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Message> messages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<PropertyImage> images = new ArrayList<>();
+
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Favorite> favorites = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "listed_by_user_id")
+    @JsonIgnore
+    private User listedBy;
 
     public Property() {}
 
@@ -93,11 +104,36 @@ public class Property {
         this.size = size;
     }
 
+    public List<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
+
+    public void setImages(List<PropertyImage> images) {
+        this.images = images;
+    }
+
+    public List<PropertyImage> getImages() {
+        return images;
+    }
+
+
     public void setFavorites(List<Favorite> favorites) {
         this.favorites = favorites;
     }
 
     public List<Favorite> getFavorites() {
         return favorites;
+    }
+
+    public User getListedBy() {
+        return listedBy;
+    }
+
+    public void setListedBy(User listedBy) {
+        this.listedBy = listedBy;
     }
 }

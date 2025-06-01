@@ -1,6 +1,7 @@
 package edu.hotproperties.final_project.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import edu.hotproperties.final_project.emuns.Role;
 
 import jakarta.persistence.*;
@@ -41,7 +42,11 @@ public class User {
     private LocalDateTime  createdAt;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<Property> favorites = new ArrayList<>();
+    private List<Favorite> favorites = new ArrayList<>();
+
+    @OneToMany(mappedBy = "listedBy", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonIgnore
+    private List<Property> listedProperties = new ArrayList<>();
 
     public User() {}
 
@@ -107,5 +112,21 @@ public class User {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<Favorite> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(List<Favorite> favorites) {
+        this.favorites = favorites;
+    }
+
+    public List<Property> getListedProperties() {
+        return listedProperties;
+    }
+
+    public void setListedProperties(List<Property> listedProperties) {
+        this.listedProperties = listedProperties;
     }
 }

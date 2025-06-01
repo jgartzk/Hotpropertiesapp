@@ -49,7 +49,8 @@ public class AuthController {
     @PreAuthorize("hasRole('BUYER')")
     public String favorites(Model model) {
         User current = authService.getCurrentUser();
-        model.addAttribute("properties", current);
+        List<Property> favorites = userService.getFavorites(current);
+        model.addAttribute("properties", favorites);
         return "favorites";
     }
 
@@ -57,7 +58,7 @@ public class AuthController {
 
     //Create new property
     @PostMapping("/properties/add")
-    @PreAuthorize("hasRole('AGENT'")
+    @PreAuthorize("hasRole('AGENT')")
     public Property addProperty(@RequestBody Property property, Model model) {
         //TODO: get data from request and create property object
         return userService.addProperty(property); //Return recently created property
@@ -65,21 +66,21 @@ public class AuthController {
 
     //Get existing property by id and update it
     @PostMapping("/properties/edit")
-    @PreAuthorize("hasRole('AGENT'")
+    @PreAuthorize("hasRole('AGENT')")
     public Property editProperty(@ModelAttribute("property") Property property) {
         return userService.updateProperty(property); //returns updated property
     }
 
     //Returns a list of properties managed by the agent (current user)
     @GetMapping("/properties/manage")
-    @PreAuthorize("hasRole('AGENT'")
+    @PreAuthorize("hasRole('AGENT')")
     public List<Property> getManagedProperties() {
         return userService.getManagedProperties(authService.getCurrentUser());
     }
 
     //Agent replies to buyer messages
     @PostMapping("/messages/reply")
-    @PreAuthorize("hasRole('AGENT'")
+    @PreAuthorize("hasRole('AGENT')")
     public Message messageReply(@RequestBody Message message, Model model) {
         return userService.messageReply(message);
     }

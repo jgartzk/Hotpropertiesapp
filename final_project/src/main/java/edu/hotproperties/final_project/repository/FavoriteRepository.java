@@ -12,4 +12,7 @@ import java.util.List;
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 
     List<Property> findAllByUser(edu.hotproperties.final_project.entities.User user);
+
+
+    Property findByUserAndProperty(edu.hotproperties.final_project.entities.User user, Property property);
 }

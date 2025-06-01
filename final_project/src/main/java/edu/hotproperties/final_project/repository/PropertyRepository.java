@@ -14,4 +14,5 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
     Property findByTitle(String title);
     Property getById(Long id);
     List<Property> findAllByAgent(User user);
+    boolean existsByTitle(String title);
 }

@@ -14,25 +14,24 @@ public class Favorite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;
 
-    @ManyToMany
-    @JoinTable(
-            name = "favorite_property",
-            joinColumns = @JoinColumn(name = "favorite_id"),
-            inverseJoinColumns = @JoinColumn(name = "property_id")
-    )
-    private List<Property> properties;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "property_id")
+    @JsonIgnore
+    private Property property;
 
     public Favorite() {}
 
-    public Favorite(LocalDateTime createdAt) {
+    public Favorite(User user, Property property, LocalDateTime createdAt) {
+        this.user = user;
+        this.property = property;
         this.createdAt = createdAt;
     }
 
@@ -52,19 +51,19 @@ public class Favorite {
         this.user = user;
     }
 
-    public List<Property> getProperties() {
-        return properties;
-    }
-
-    public void setProperty(List<Property> properties) {
-        this.properties = properties;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Property getProperty() {
+        return property;
+    }
+
+    public void setProperty(Property property) {
+        this.property = property;
     }
 }
