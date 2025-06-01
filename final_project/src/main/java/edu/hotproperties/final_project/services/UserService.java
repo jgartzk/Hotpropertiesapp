@@ -37,13 +37,13 @@ public interface UserService {
     void prepareEditPropertyModel(Long id, Model model);
 
     @PreAuthorize("hasRole('Agent')")
-    List<Property> getManagedProperties(User user);
+    void prepareManagedListingsModel(User agent, Model model);
 
     @PreAuthorize("hasRole('Agent')")
-    Property addProperty(Property property);
+    void prepareMessagesModel(Model model);
 
     @PreAuthorize("hasRole('Agent')")
-    Property updateProperty(Property property);
+    void prepareViewMessageModel(Long id, Model model);
 
     @PreAuthorize("hasRole('Agent')")
     Message messageReply(Message message);
@@ -57,5 +57,7 @@ public interface UserService {
     void prepareManagedListingsModel(User agent, Model model);
 
     void prepareViewMessageModel(Long id, Model model);
+    void postMessageReply(Long id, String reply);
+
 }
 

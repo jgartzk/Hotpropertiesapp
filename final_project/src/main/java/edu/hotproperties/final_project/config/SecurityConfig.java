@@ -48,7 +48,7 @@ public class SecurityConfig {
 
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/login", "/login-form").permitAll()
                         .requestMatchers("/register").permitAll()
                         .requestMatchers("/agent/**").hasRole("AGENT")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
@@ -57,7 +57,8 @@ public class SecurityConfig {
 
                         .anyRequest().authenticated()
                 )
-                .httpBasic(Customizer.withDefaults())
+
+                //.httpBasic(Customizer.withDefaults())
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(new CustomAuthenticationEntryPoint())  // Handles 401 errors
                         .accessDeniedHandler(new CustomAccessDeniedHandler())

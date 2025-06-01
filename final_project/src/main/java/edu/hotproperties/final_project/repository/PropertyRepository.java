@@ -11,6 +11,7 @@ import java.util.Optional;
 @Repository
 public interface PropertyRepository extends JpaRepository<Property, Long> {
     List<Property> findAllByOrderByPriceDesc();
+
     Property findByTitle(String title);
     Property getById(Long id);
     List<Property> findAllByAgent(User user);

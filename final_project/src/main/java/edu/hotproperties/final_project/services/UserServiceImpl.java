@@ -1,7 +1,12 @@
 package edu.hotproperties.final_project.services;
 
 import edu.hotproperties.final_project.entities.Favorite;
+
+import edu.hotproperties.final_project.emuns.Role;
+
+import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import edu.hotproperties.final_project.entities.Message;
+
 import edu.hotproperties.final_project.entities.Property;
 import edu.hotproperties.final_project.entities.User;
 import edu.hotproperties.final_project.exceptions.*;
@@ -22,7 +27,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.Optional;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import java.util.Set;
+import java.util.stream.Collectors;
+
+
+
+import java.util.Optional;
+
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -44,6 +58,35 @@ public class UserServiceImpl implements UserService {
         this.messageRepository = messageRepository;
     }
 
+    @Override
+    public User getCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
+    }
+
+
+    @Override
+    public User registerNewUser(User user, List<String> roleNames) {
+        Set<Role> roles = roleNames.stream()
+                .map(roleName ->{
+                    try{
+                        return Role.valueOf(roleName.toUpperCase());
+                    } catch (IllegalArgumentException e){
+                        throw new RuntimeException(" Role used is not valid");
+                    }
+                })
+                .collect(Collectors.toSet());
+
+        user.setRoles(roles);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+        return user;
+    }
+
+
+
     private CurrentUserContext getCurrentUserContext() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
@@ -64,9 +107,11 @@ public class UserServiceImpl implements UserService {
         return propertyRepository.findAllByOrderByPriceDesc();
     }
 
+    //Maybe get by property id instead?
     @Override
     public Property getProperty(String title) {
         Property property = propertyRepository.findByTitle(title);
+        //TODO: if not found throw PropertyNotFound Exception
         return property;
     }
 
@@ -76,6 +121,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+
     public Favorite removeFavorite(Favorite favorite) {
         Favorite temp = favorite;
         if(favoriteExists(favorite.getUser(), favorite.getProperty()))
@@ -91,21 +137,13 @@ public class UserServiceImpl implements UserService {
         return favorite;
     }
 
-    @Override
-    public List<Property> getManagedProperties(User user) {
-        //TODO get all properties where user is agent
-        List<Property> managedProperties = propertyRepository.findAllByAgent(user);
-        return managedProperties;
-    }
-
-    @Override
     public void createProperty(Property property) {
         //Validate property, int must be positive and string must not be empty
         if (property.getPrice() > 0 &&
-                property.getSize() > 0 &&
-                !property.getTitle().isEmpty() &&
-                !property.getLocation().isEmpty() &&
-                !property.getDescription().isEmpty()
+            property.getSize() > 0 &&
+            !property.getTitle().isEmpty() &&
+            !property.getLocation().isEmpty() &&
+            !property.getDescription().isEmpty()
         ) {
             propertyRepository.save(property);
         }
@@ -140,6 +178,49 @@ public class UserServiceImpl implements UserService {
         //Get message by id and return it to model
         Message message = messageRepository.getById(id);
         model.addAttribute("message", message);
+    }
+
+    @Override
+    public void prepareEditPropertyModel(Long id, Model model){
+        Property property = propertyRepository.getById(id);
+        model.addAttribute("property", property);
+    }
+
+    @Override
+    public void postMessageReply(Long id, String reply) {
+        //Get message w/o reply
+        Message message = messageRepository.getById(id);
+        //Set reply
+        message.setReply(reply);
+        //Save message with reply to db
+        messageRepository.save(message);
+    }
+
+    //Gets all messages and adds them to model
+    @Override
+    public void prepareViewMessageModel(Long id, Model model) {
+        //Get message by id and return it to model
+        Message message = messageRepository.getById(id);
+        model.addAttribute("message", message);
+    }
+  
+  public void prepareMessagesModel(Model model) {
+        List<Message> messages = new ArrayList<Message>();
+
+        //Get current user (Agent)
+        User currentUser = getCurrentUserContext().user();
+
+        //For all properties managed by agent
+        List<Property> properties = propertyRepository.findAllByAgent(currentUser);
+        for (Property property : properties) {
+            //If message exists at property, add to the model
+            if (messageRepository.existsByProperty(property)) {
+               messages.add(messageRepository.getByProperty(property));
+
+            }
+        }
+        //Add all messages to model
+        model.addAttribute("messages", messages);
     }
 
     //////////////////////////////////////////////////////
@@ -283,5 +364,5 @@ public class UserServiceImpl implements UserService {
         else if(password.trim().equals("")) {
             throw new InvalidUserParameterException("Password is empty");
         }
-    }
+   
 }
