@@ -83,6 +83,7 @@ public class AuthController {
         User agent = authService.getCurrentUser();
         userService.prepareManagedListingsModel(agent, model);
         return "manage_listings";
+<<<<<<< HEAD
     }
 
     //Get all messages for Agent
@@ -110,7 +111,35 @@ public class AuthController {
         //User adds sender info and message to screen
         userService.postMessageReply(id, reply);
         return "view_message";
+=======
+>>>>>>> 4637fc9bcf90498096fc22d6e2ea334883d73c59
     }
+
+    //Get all messages for Agent
+    @GetMapping("/messages")
+    @PreAuthorize("hasRole('AGENT')")
+    public String getMessages(Model model) {
+        //User service adds Agent's list of messages to the model
+        userService.prepareMessagesModel(model);
+        return "messages";
+    }
+
+    //Agent replies to buyer messages
+    @GetMapping("/message")
+    @PreAuthorize("hasRole('AGENT')")
+    public String viewMessage(@RequestParam(name="id") Long id, Model model) {
+        //User adds sender info and message to screen
+        userService.prepareViewMessageModel(id, model);
+        return "view_message";
+    }
+
+    //Agent replies to buyer messages
+    @PostMapping("/message")
+    @PreAuthorize("hasRole('AGENT')")
+    public String viewMessage(@RequestParam(name="id") Long id, @RequestBody String reply) {
+        //User adds sender info and message to screen
+        userService.postMessageReply(id, reply);
+        return "view_message";
 
     //Agent replies to buyer messages
     @PostMapping("/messages/reply")
