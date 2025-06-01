@@ -6,6 +6,8 @@ import edu.hotproperties.final_project.entities.Property;
 import edu.hotproperties.final_project.entities.User;
 import edu.hotproperties.final_project.exceptions.*;
 import edu.hotproperties.final_project.repository.FavoriteRepository;
+import edu.hotproperties.final_project.emuns.Role;
+import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import edu.hotproperties.final_project.repository.MessageRepository;
 import edu.hotproperties.final_project.repository.PropertyRepository;
 import edu.hotproperties.final_project.repository.UserRepository;
@@ -16,6 +18,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.Optional;
 
 import java.util.List;
 
@@ -94,25 +99,47 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Property addProperty(Property property) {
-        //TODO: Validate property
-        return propertyRepository.save(property);
+    public void createProperty(Property property) {
+        //Validate property, int must be positive and string must not be empty
+        if (property.getPrice() > 0 &&
+                property.getSize() > 0 &&
+                !property.getTitle().isEmpty() &&
+                !property.getLocation().isEmpty() &&
+                !property.getDescription().isEmpty()
+        ) {
+            propertyRepository.save(property);
+        }
+        //TODO: else throw InvalidPropertyException
     }
 
     @Override
-    public Property updateProperty(Property property) {
-        Property updatedProperty = propertyRepository.getById(property.getId());
-        //TODO: Error if property not found
-        //TODO: Update Property
-        return updatedProperty;
+    public void updateProperty(Long id, Property updatedProperty) {
+        //Get existing property from db
+        Property property = propertyRepository.getById(id);
+        //TODO: if property==null throw PropertyNotFound
+
+        //update with changes
+        property.setTitle(updatedProperty.getTitle());
+        property.setPrice(updatedProperty.getPrice());
+        property.setDescription(updatedProperty.getDescription());
+        property.setLocation(updatedProperty.getLocation());
+        property.setSize(updatedProperty.getSize());
+
+        //save changes
+        propertyRepository.save(property);
     }
 
     @Override
-    public Message messageReply(Message message) {
-        Message updatedMessage = messageRepository.getById(message.getId());
-        //TODO: Error if property not found
-        //TODO: Update Message with reply
-        return updatedMessage;
+    public void prepareManagedListingsModel(User agent, Model model) {
+        List<Property> properties = propertyRepository.findAllByAgent(agent);
+        model.addAttribute("properties", properties);
+    }
+
+    @Override
+    public void prepareViewMessageModel(Long id, Model model) {
+        //Get message by id and return it to model
+        Message message = messageRepository.getById(id);
+        model.addAttribute("message", message);
     }
 
     //////////////////////////////////////////////////////

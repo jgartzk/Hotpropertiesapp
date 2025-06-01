@@ -23,11 +23,18 @@ public interface UserService {
     @PreAuthorize("hasRole('BUYER')")
     List<Property> getFavorites(User user);
 
-    @PreAuthorize("hasRole('BUYER')")
-    Favorite removeFavorite(Favorite favorite);
+    User registerNewUser(User user, List<String> roleNames);
 
-    @PreAuthorize("hasRole('BUYER')")
-    Favorite addFavorite(Favorite favorite);
+    User getCurrentUser();
+
+    @PreAuthorize("hasRole('Agent')")
+    void createProperty(Property property);
+
+    @PreAuthorize("hasRole('Agent')")
+    void updateProperty(Long id, Property property);
+
+    @PreAuthorize("hasRole('Agent')")
+    void prepareEditPropertyModel(Long id, Model model);
 
     @PreAuthorize("hasRole('Agent')")
     List<Property> getManagedProperties(User user);
@@ -40,5 +47,15 @@ public interface UserService {
 
     @PreAuthorize("hasRole('Agent')")
     Message messageReply(Message message);
+
+    @PreAuthorize("hasRole('BUYER')")
+    Favorite removeFavorite(Favorite favorite);
+
+    @PreAuthorize("hasRole('BUYER')")
+    Favorite addFavorite(Favorite favorite);
+
+    void prepareManagedListingsModel(User agent, Model model);
+
+    void prepareViewMessageModel(Long id, Model model);
 }
 
