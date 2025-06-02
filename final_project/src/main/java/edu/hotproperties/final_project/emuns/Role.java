@@ -6,13 +6,6 @@ public enum Role {
 
     public String getRole() {
 
-        if(this == ADMIN)
-            return "ADMIN";
-        else if (this == BUYER) {
-            return "BUYER";
-        }
-        else if (this == AGENT)
-            return "AGENT";
-        return null;
+        return "ROLE_" + this.name();
     }
 }

@@ -23,6 +23,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.Optional;
@@ -70,17 +72,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public User registerNewUser(User user, List<String> roleNames) {
         Set<Role> roles = roleNames.stream()
-                .map(roleName ->{
-                    try{
-                        return Role.valueOf(roleName.toUpperCase());
-                    } catch (IllegalArgumentException e){
-                        throw new RuntimeException(" Role used is not valid");
+                .map(roleName -> {
+                    try {
+
+                        String role = roleName.toUpperCase().replaceFirst("^ROLE_", "");
+                        return Role.valueOf(role);
+                    } catch (IllegalArgumentException e) {
+                        throw new RuntimeException("Role used is not valid: " + roleName);
                     }
                 })
                 .collect(Collectors.toSet());
 
         user.setRoles(roles);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setCreatedAt(LocalDateTime.now());
         userRepository.save(user);
         return user;
     }
