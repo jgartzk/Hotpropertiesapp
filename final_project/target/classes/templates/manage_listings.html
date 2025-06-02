@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Managed Properties</h1>
+    <li th:each="property : ${properties}">
+        <h2 th:text="${property.title} - {property.price}"></h2>
+        <h4 th:text="${property.location} - ${property.size}"></h4>
+        <p th:text="${property.description}"></p>
+        <a th:href="@{/properties/edit(id=${property.id})}"></a>
+    </li>
+</body>
+</html>

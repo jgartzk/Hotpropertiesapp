@@ -101,6 +101,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void prepareProfileModel(Model model) {
+        CurrentUserContext context = getCurrentUserContext();
+        model.addAttribute("firstName", context.user().getFirstName());
+        model.addAttribute("lastName", context.user().getLastName());
+        model.addAttribute("email", context.user().getEmail());
+        model.addAttribute("role", context.user().getRoles());
+    }
+
+    @Override
     public void prepareDashboardModel(Model model) {
         CurrentUserContext context = getCurrentUserContext();
         model.addAttribute("user", context.user());

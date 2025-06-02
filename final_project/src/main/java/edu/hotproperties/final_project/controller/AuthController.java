@@ -28,9 +28,9 @@ public class AuthController {
         this.userService = userService;
     }
 
-    @GetMapping({"/", "/index"})
-    public String showIndex() {
-        return "index";
+    @GetMapping({"/", ""})
+    public String loginRedirect() {
+        return "redirect:/login";
     }
 
     @GetMapping("/login")
@@ -85,6 +85,13 @@ public class AuthController {
         }
     }
 
+    @GetMapping("/profile")
+    public String viewProfile(Model model){
+        userService.prepareProfileModel(model);
+        return "profile";
+    }
+
+
     @GetMapping("/dashboard")
     @PreAuthorize("hasAnyRole('BUYER', 'AGENT', 'ADMIN')")
     public String dashboard(Model model) {
@@ -138,7 +145,7 @@ public class AuthController {
 
     //Get existing property by id and update it
 
-  @PostMapping("/properties/edit")
+    @PostMapping("/properties/edit")
     @PreAuthorize("hasRole('AGENT')")
     public void editProperty(@RequestParam(name="id") Long id, @ModelAttribute("property") Property property) {
         userService.updateProperty(id, property); //returns updated property
@@ -152,7 +159,7 @@ public class AuthController {
 
     //Returns a list of properties managed by the agent (current user)
     @GetMapping("/properties/manage")
- @PreAuthorize("hasRole('AGENT')")
+    @PreAuthorize("hasRole('AGENT')")
     public String getManagedProperties(Model model) {
         User agent = authService.getCurrentUser();
         userService.prepareManagedListingsModel(agent, model);

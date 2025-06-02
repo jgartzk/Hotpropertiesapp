@@ -10,15 +10,25 @@
     <h1 th:text="'Hello, ' + ${user.firstName} + ' ' + ${user.lastName} + '!'">Hello!</h1>
     <p class="profile-table">Welcome to your dashboard.</p>
     <ul class="no-bullets">
-        <li><a th:href="@{/profile}">View Profile</a></li>
-        <li><a th:href="@{/settings}">Account Settings</a></li>
 
-        <li th:if="${#authorization.expression('hasRole(''MANAGER'')')}">
-            <a th:href="@{/manager/team}">View All Employees</a>
+        <li><a th:href="@{/profile}">My Profile</a></li>
+
+        <li th:if="${#authorization.expression('hasRole(''BUYER'')')}">
+            <a th:href="@{/properties/list}">Browse Properties</a>
+            <a th:href="@{/favorites/favorites}">Saved Favorites</a>
+            <a th:href="@{/manager/team}">View Messages</a>
+        </li>
+
+        <li th:if="${#authorization.expression('hasRole(''AGENT'')')}">
+            <a th:href="@{/properties/manage}">Manage Listings</a>
+            <a th:href="@{/properties/add}">Add New Property</a>
+            <a th:href="@{/messages}">View Messages</a>
         </li>
 
         <li th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
             <a th:href="@{/admin/users}">View All Users</a>
+            <a th:href="@{/admin/users}">New Agent</a>
+
         </li>
 
         <li><a class="section-spacing" th:href="@{/logout}">Log Out</a></li>

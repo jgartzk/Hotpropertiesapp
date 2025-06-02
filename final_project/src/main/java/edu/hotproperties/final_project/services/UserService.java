@@ -14,6 +14,9 @@ public interface UserService {
     @PreAuthorize("isAuthenticated()")
     void prepareDashboardModel(Model model);
 
+
+    void prepareProfileModel(Model model);
+
     @PreAuthorize("hasRole('BUYER')")
     List<Property> getProperties();
 
