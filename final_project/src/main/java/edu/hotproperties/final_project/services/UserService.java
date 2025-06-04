@@ -30,6 +30,8 @@ public interface UserService {
 
     User getCurrentUser();
 
+    void prepareEditProfileModel(Model model);
+
     @PreAuthorize("hasRole('Agent')")
     void createProperty(Property property);
 

@@ -86,10 +86,18 @@ public class AuthController {
     }
 
     @GetMapping("/profile")
-    public String viewProfile(Model model){
+    public String viewProfile(Model model) {
         userService.prepareProfileModel(model);
         return "profile";
     }
+
+    @GetMapping("/profile/edit")
+    public String editProfile(Model model){
+        userService.prepareEditProfileModel(model);
+        return "edit_profile";
+    }
+
+
 
 
     @GetMapping("/dashboard")
