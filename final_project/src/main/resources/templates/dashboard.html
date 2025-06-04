@@ -21,6 +21,14 @@
             <a th:href="@{/admin/users}">View All Users</a>
         </li>
 
+        <li th:if="${#authorization.expression('hasRole(''BUYER'')')}">
+            <a th:href="@{/properties/list}">Browse Properties</a>
+        </li>
+
+        <li th:if="${#authorization.expression('hasRole(''BUYER'')')}">
+            <a th:href="@{/favorites/favorites}">Saved Favorites</a>
+        </li>
+
         <li><a class="section-spacing" th:href="@{/logout}">Log Out</a></li>
     </ul>
 </div>
