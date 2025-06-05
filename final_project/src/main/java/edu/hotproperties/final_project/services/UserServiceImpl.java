@@ -215,6 +215,32 @@ public class UserServiceImpl implements UserService {
         //save changes
         propertyRepository.save(property);
     }
+    @Override
+    public void preparePropertyView(Long id, Model model) {
+
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new PropertyNotFoundException("Property with id {"+id+"} not found"));
+
+        model.addAttribute("property",property);
+        model.addAttribute("id", id);
+
+        User buyer = getCurrentUserContext().user();
+        //boolean button = isFavorite(buyer, property);
+        //.addAttribute("button",button);
+    }
+
+    @Override
+    public void sendMessage(Long id, String message) {
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new PropertyNotFoundException("Property with id {"+id+"} not found"));
+
+        User buyer = getCurrentUserContext().user();
+        Message newMessage = new Message(message, property, buyer);
+        messageRepository.save(newMessage);
+
+        property.addMessage(newMessage);
+        propertyRepository.save(property);
+    }
 
     @Override
     public void prepareManagedListingsModel(Model model) {

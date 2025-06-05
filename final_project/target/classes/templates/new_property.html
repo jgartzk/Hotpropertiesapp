@@ -7,7 +7,13 @@
 </head>
 <body>
     <h1>Add New Property</h1>
-    <a th:href="@{/dashboard}">Back To Dashboard</a>
+
+    <p style="text-align: left; margin-top: 15px;">
+        <a th:href="@{/dashboard}">
+            <button class="button">← Dashboard</button>
+        </a>
+    </p>
+
     <div class="login-container">
         <form th:action="@{/agent/new_property}" th:object="${property}" method="post" enctype="multipart/form-data">
             <label>Title: <input th:field="*{title}"/></label><br>

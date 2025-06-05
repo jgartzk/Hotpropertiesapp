@@ -118,25 +118,21 @@ public class AuthController {
     }
 
     //BUYER FUNCTIONALITY
-    @GetMapping("/properties/list")
+    @GetMapping("/buyer/properties/list")
     @PreAuthorize("hasRole('BUYER')")
     public String properties(Model model) {
         model.addAttribute("properties", userService.getProperties());
         return "browse_properties";
     }
 
-    @GetMapping("/properties/view")
+    @GetMapping("/buyer/properties/view")
     @PreAuthorize("hasRole('BUYER')")
-    public String viewing(@RequestParam String title, Model model) {
-        Property priority = userService.getProperty(title);
-        model.addAttribute("property",priority);
-        User current = authService.getCurrentUser();
-        boolean button = userService.isFavorite(current, priority);
-        model.addAttribute("button",button);
+    public String viewing(@RequestParam(required = true) Long id, Model model) {
+        userService.preparePropertyView(id, model);
         return "property_details";
     }
 
-    @GetMapping("/favorites/favorites")
+    @GetMapping("/buyer/favorites/favorites")
     @PreAuthorize("hasRole('BUYER')")
     public String favorites(Model model) {
         User current = authService.getCurrentUser();
@@ -145,7 +141,7 @@ public class AuthController {
         return "favorites";
     }
 
-    @DeleteMapping("/favorites/remove")
+    @DeleteMapping("/buyer/favorites/remove")
     @PreAuthorize("hasRole('BUYER')")
     public String removeFavorite(@RequestParam Long propertyId) {
         User current = authService.getCurrentUser();
@@ -153,6 +149,15 @@ public class AuthController {
         userService.removeFavorite(current, property);
         return "redirect:/favorites/favorites";
     }
+
+    @PostMapping("buyer/message")
+    //@PreAuthorize("hasRole('BUYER')")
+    public void contactAgent(@RequestParam(required = true) Long id,
+                               @RequestParam(required = true) String message)
+    {
+        userService.sendMessage(id, message);
+    }
+
 
     //AGENT FUNCTIONALITY
 

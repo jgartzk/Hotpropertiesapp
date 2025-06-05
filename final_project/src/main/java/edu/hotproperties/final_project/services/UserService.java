@@ -59,10 +59,14 @@ public interface UserService {
 //    @PreAuthorize("hasRole('Agent')")
 //    Message messageReply(Message message);
 
-    @PreAuthorize("hasRole('BUYER')")
+    void preparePropertyView(Long id, Model model);
+
+    void sendMessage(Long id, String message);
+
+    //@PreAuthorize("hasRole('BUYER')")
     Favorite removeFavorite(User user, Property property);
 
-    @PreAuthorize("hasRole('BUYER')")
+    //@PreAuthorize("hasRole('BUYER')")
     Favorite addFavorite(Favorite favorite);
 
     boolean isFavorite(User user, Property property);

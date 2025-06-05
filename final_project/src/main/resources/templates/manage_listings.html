@@ -7,7 +7,13 @@
 </head>
 <body>
     <h1>Managed Properties</h1>
-    <a th:href="@{/dashboard}">Back To Dashboard</a>
+
+    <p style="text-align: left; margin-top: 15px;">
+        <a th:href="@{/dashboard}">
+            <button class="button">← Dashboard</button>
+        </a>
+    </p>
+
     <p th:if="${properties} == null">You do not have any managed listings</p>
 
     <ul class="no-bullets" th:each="property : ${properties}">

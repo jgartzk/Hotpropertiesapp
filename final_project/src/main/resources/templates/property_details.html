@@ -8,31 +8,37 @@
 <body>
 <div>
     <p style="text-align: left; margin-top: 15px;">
-        <a th:href="@{/dashboard}">
-            <button class="button">← Dashboard</button>
-        </a>
-    </p>
-
-    <p style="text-align: right; margin-top: 15px;">
-        <a th:href="@{/dashboard}">
-            <button class="button">&larr; Dashboard</button>
+        <a th:href="@{/buyer/properties/list}">
+            <button class="button">← Browse Properties</button>
         </a>
     </p>
 </div>
-<div class="property-card">
-    <h2 th:text="${property.title}"></h2>
-    <p th:text= "'Price:        $' + ${property.title}"></p>
-    <p th:text= "'Location:     ' + ${property.location}"></p>
-    <p th:text= "'Size:         ' + ${property.size}"></p>
-    <p><b>Description</b></p>
-    <p th:text="${property.description}"></p>
-    <h4><b>Property Images</b></h4>
+<h1 th:text="${property.title}"></h1>
+<div class="details-card">
+    <div style="display:flex;flex-direction:row;">
+        <div class="details-image">
+            <p>Image list goes here</p>
+        </div>
 
-    <h3><b>Contact the Agent</b></h3>
-    <p>Your Message:</p>
-    <div style="margin-top: 20px;">
-        <a href="/properties/list" class="back-link">&larr; Back to Listings</a>
+        <div class="details-column">
+            <p th:text= "'Price:        $' + ${property.price}"></p>
+            <p th:text= "'Location:     ' + ${property.location}"></p>
+            <p th:text= "'Size:         ' + ${property.size}"></p>
+            <p><b>Description</b></p>
+            <p th:text="${property.description}"></p>
+        </div>
     </div>
+
+    <div class="details-contact">
+        <h3><b>Contact Agent</b></h3>
+
+        <form th:action="@{/buyer/message(id=${id})}" method="post">
+            <label>Message: <input name="message"/></label><br>
+            <button type="submit" class="btn">Send</button>
+        </form>
+
+    </div>
+
 </div>
 </body>
 </html>

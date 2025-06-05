@@ -218,6 +218,33 @@ tr {
     display: flex;
 }
 
+.details-card {
+    width: 800px;
+    height: 600px;
+    background: white;
+    border-radius: 10px;
+    display: flex;
+    flex-direction:column;
+}
+
+.details-image {
+    width:600px;
+    height:350px;
+    background-color:gray;
+}
+
+.details-column {
+    width:200px;
+    height:350px;
+    display:flex;
+    flex-direction:column;
+}
+
+.details-contact {
+    display:flex;
+    flex-direction:column;
+}
+
 .remove-button {
     width: 100%;
     padding: 10px;

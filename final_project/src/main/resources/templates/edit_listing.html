@@ -7,7 +7,13 @@
 </head>
 <body>
 <h1>Edit Listing</h1>
-<a th:href="@{/agent/manage_listings}">Back To Properties</a>
+
+<p style="text-align: left; margin-top: 15px;">
+    <a th:href="@{/agent/manage_listings}">
+        <button class="button">← Manage Listings</button>
+    </a>
+</p>
+
 <div class="property-container">
     <form th:action="@{/agent/edit_listing(id=${id})}" method="post">
         <label>Title: <input name="title" th:value="${title}"/></label><br>

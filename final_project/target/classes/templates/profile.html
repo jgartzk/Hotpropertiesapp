@@ -6,6 +6,13 @@
     <link rel="stylesheet" th:href="@{/css/login.css}"/>
 </head>
 <body>
+<h1>My Profile</h1>
+<p style="text-align: left; margin-top: 15px;">
+    <a th:href="@{/dashboard}">
+        <button class="button">← Dashboard</button>
+    </a>
+</p>
+
 <div class="login-container">
     <table>
         <tr>
@@ -26,7 +33,6 @@
         </tr>
     </table>
     <br>
-    <a class="btn" th:href="@{/dashboard}">Back to Dashboard</a>
     <a class="btn" th:href="@{/profile/edit}">Edit Profile</a>
 </div>
 </body>
