@@ -13,7 +13,7 @@ import java.util.Set;
 public class Property {
 
     @Id
-    @GeneratedValue( strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -26,7 +26,7 @@ public class Property {
     private String description;
 
     @Column(nullable = false)
-    private  String location;
+    private String location;
 
     @Column(nullable = false)
     private Integer size;
@@ -42,16 +42,13 @@ public class Property {
     private List<Favorite> favorites = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "listed_by_user_id")
-    @JsonIgnore
-    private User listedBy;
-
-    @OneToOne
     @JoinColumn(name = "agent_id")
+    @JsonIgnore
     private User agent;
-    //Alan addition. added hoping  this would fix the error in the code. may not be nbeeded but keeping now so code is runnable for testing pages
+    //Alan addition. added hoping  this would fix the error in the code. may not be needed but keeping now so code is runnable for testing pages
 
-    public Property() {}
+    public Property() {
+    }
 
     public Property(String title, double price, String description, String location, Integer size) {
         this.title = title;
@@ -109,6 +106,10 @@ public class Property {
         this.size = size;
     }
 
+    public void setAgent(User agent) {
+        this.agent = agent;
+    }
+
     public List<Message> getMessages() {
         return messages;
     }
@@ -132,13 +133,5 @@ public class Property {
 
     public List<Favorite> getFavorites() {
         return favorites;
-    }
-
-    public User getListedBy() {
-        return listedBy;
-    }
-
-    public void setListedBy(User listedBy) {
-        this.listedBy = listedBy;
     }
 }

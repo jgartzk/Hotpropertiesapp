@@ -48,7 +48,9 @@ public class SecurityConfig {
 
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/login-form").permitAll()
+                                .anyRequest().permitAll()
+                        /*
+                        .requestMatchers("/login", "/login-form","/error").permitAll()
                         .requestMatchers("/register").permitAll()
                         .requestMatchers("/profile/**", "/dashboard/**").hasAnyRole("AGENT","ADMIN","BUYER")
                         .requestMatchers("/agent/**").hasRole("AGENT")
@@ -56,6 +58,7 @@ public class SecurityConfig {
                         .requestMatchers("/buyer/**").hasRole("BUYER")
                         .requestMatchers("/", "/index", "/css/**", "/js/**", "/images/**", "/webjars/**", "/profile").permitAll()
                         .anyRequest().authenticated()
+                        */
                 )
 
                 //.httpBasic(Customizer.withDefaults())

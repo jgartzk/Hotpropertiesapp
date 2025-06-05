@@ -6,18 +6,35 @@
     <link rel="stylesheet" th:href="@{/css/login.css}"/>
 </head>
 <body>
-<div class="login-container">
+<div>
+    <p style="text-align: left; margin-top: 15px;">
+        <a th:href="@{/dashboard}">
+            <button class="button">← Dashboard</button>
+        </a>
+    </p>
+
     <p style="text-align: right; margin-top: 15px;">
-        <button onclick="location.href='/dashboard'" class="button">Dashboard</button>
+        <a th:href="@{/dashboard}">
+            <button class="button">&larr; Dashboard</button>
+        </a>
     </p>
 </div>
+<div class="property-list">
+    <div class = "property-card" th:each="property : ${properties}">
+        <img th:src="${property.images[0]}" alt="Property Image" class="property-img">
+        <h3>
+            <a th:href="@{/properties/view(name=${property.id})}" th:text="${property.title}"></a>
+        </h3>
+        <p><b>Price: $</b> <span th:text="${property.price}"></span></p>
+        <p><b>Location: </b> <span th:text="${property.location}"></span></p>
+        <p><b>Sq. Ft: </b> <span th:text="${property.size}"></span></p>
+        <p style="text-align: left; margin-top: 15px;">
+            <a th:href="@{/properties/view(name=${property.id})}">
+                <button class="button">View details</button>
+            </a>
+        </p>
+    </div>
 
-<div class="login-container">
-    <h1 th:text="'Hello, ' + ${user.firstName} + ' ' + ${user.lastName} + '!'">Hello!</h1>
-    <p class="profile-table">Welcome to your dashboard.</p>
-    <ul class="no-bullets">
-
-    </ul>
 </div>
 </body>
 </html>

@@ -14,7 +14,7 @@ public interface UserService {
     @PreAuthorize("isAuthenticated()")
     void prepareDashboardModel(Model model);
 
-
+    @PreAuthorize("isAuthenticated()")
     void prepareProfileModel(Model model);
 
     @PreAuthorize("hasRole('BUYER')")
@@ -30,24 +30,30 @@ public interface UserService {
 
     User getCurrentUser();
 
+    @PreAuthorize("isAuthenticated()")
+    void postEditProfile(String firstName, String lastName, String email);
+
+    @PreAuthorize("isAuthenticated()")
     void prepareEditProfileModel(Model model);
 
-    @PreAuthorize("hasRole('Agent')")
+    //@PreAuthorize("hasRole('AGENT')")
     void createProperty(Property property);
 
-    @PreAuthorize("hasRole('Agent')")
+    //@PreAuthorize("hasRole('AGENT')")
     void updateProperty(Long id, Property property);
 
-    @PreAuthorize("hasRole('Agent')")
+    //@PreAuthorize("hasRole('AGENT')")
     void prepareEditPropertyModel(Long id, Model model);
 
-    @PreAuthorize("hasRole('Agent')")
-    void prepareManagedListingsModel(User agent, Model model);
+    //@PreAuthorize("hasRole('AGENT')")
+    void prepareManagedListingsModel(Model model);
 
-    @PreAuthorize("hasRole('Agent')")
+    //@PreAuthorize("hasRole('AGENT')")
     void prepareMessagesModel(Model model);
 
-    @PreAuthorize("hasRole('Agent')")
+    //@PreAuthorize("hasRole('AGENT')")
+    void prepareNewPropertyModel(Model model);
+    //@PreAuthorize("hasRole('AGENT')")
     void prepareViewMessageModel(Long id, Model model);
 
 //    @PreAuthorize("hasRole('Agent')")

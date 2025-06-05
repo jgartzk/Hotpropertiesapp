@@ -6,6 +6,7 @@
 </head>
 <body>
     <h1>Messages</h1>
+    <a th:href="@{/dashboard}">Back to Dashboard</a>
     <li th:each="message : ${messages}">
         <h2 th:text="${message.sender}: {message.property.title}"></h2>
         <h4 th:text="${message.timestamp}"></h4>

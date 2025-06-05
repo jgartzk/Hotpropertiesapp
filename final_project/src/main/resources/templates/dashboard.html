@@ -14,35 +14,30 @@
         <span th:if="${#authorization.expression('hasRole(''AGENT'')')}" th:text="'Agent'">Agent</span>
         <span th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:text="'Admin'">Admin</span>
     </p>
-    <p class="profile-table">Welcome to your dashboard.</p>
-    <ul class="no-bullets">
-        <li th:if="${#authorization.expression('hasRole(''BUYER'')')}">
-        <li><a th:href="@{/profile}">View Profile</a></li>
-        <li><a th:href="@{/settings}">Account Settings</a></li>
-        <li><a th:href="@{/favorites}">Favorites</a></li>
-        <li><a th:href="@{/view_message}">View Messages</a></li>
+        <p class="profile-table">Welcome to your dashboard.</p>
 
-        <li th:if="${#authorization.expression('hasRole(''AGENT'')')}">
-            <a th:href="@{/manage_listings}">Manage Listings</a>
-            <a th:href="@{/new_property}">Add New Property</a>
-            <a th:href="@{/view_message}">View Messages</a>
-        </li>
 
-        <li th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-            <a th:href="@{/admin/users}">View All Users</a>
-        </li>
-        <li><a th:href="@{/create_agent}">Create Agent</a></li>
+        <ul th:if="${#authorization.expression('hasRole(''BUYER'')')}" class="no-bullets">
+            <li><a th:href="@{/profile}">My Profile</a></li>
+            <li><a th:href="@{/properties/list}">Browse Properties</a></li>
+            <li><a th:href="@{/buyer/favorites}">Saved Favorites</a></li>
+            <li><a th:href="@{/buyer/view_message}">View Messages</a></li>
+        </ul>
 
-        <li th:if="${#authorization.expression('hasRole(''BUYER'')')}">
-            <a th:href="@{/properties/list}">Browse Properties</a>
-        </li>
+        <ul th:if="${#authorization.expression('hasRole(''AGENT'')')}" class="no-bullets">
+            <li><a th:href="@{/profile}">My Profile</a></li>
+            <li><a th:href="@{/agent/manage_listings}">Manage Listings</a></li>
+            <li><a th:href="@{/agent/new_property}">Add New Property</a></li>
+            <li><a th:href="@{/agent/messages}">View Messages</a></li>
+        </ul>
 
-        <li th:if="${#authorization.expression('hasRole(''BUYER'')')}">
-            <a th:href="@{/favorites/favorites}">Saved Favorites</a>
-        </li>
+        <ul th:if="${#authorization.expression('hasRole(''ADMIN'')')}" class="no-bullets">
+            <li><a th:href="@{/profile}">My Profile</a></li>
+            <li><a th:href="@{/admin/users}">Manage Users</a></li>
+            <li><a th:href="@{/admin/create_agent}">Create Agent</a></li>
+        </ul>
 
-        <li><a class="section-spacing" th:href="@{/logout}">Log Out</a></li>
-    </ul>
+        <a class="section-spacing" th:href="@{/logout}">Log Out</a>
 </div>
 </body>
 </html>

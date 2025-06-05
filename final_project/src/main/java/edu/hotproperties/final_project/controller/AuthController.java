@@ -92,13 +92,23 @@ public class AuthController {
     }
 
     @GetMapping("/profile/edit")
+    @PreAuthorize("isAuthenticated()")
     public String editProfile(Model model){
         userService.prepareEditProfileModel(model);
         return "edit_profile";
     }
 
+    @PostMapping("/profile/edit")
+    @PreAuthorize("isAuthenticated()")
+    public String editProfile(
+                              @RequestParam(required = false) String firstName,
+                              @RequestParam(required = false) String lastName,
+                              @RequestParam(required = false) String email
+                              ) {
 
-
+        userService.postEditProfile(firstName, lastName, email);
+        return "redirect:/profile";
+    }
 
     @GetMapping("/dashboard")
     @PreAuthorize("hasAnyRole('BUYER', 'AGENT', 'ADMIN')")
@@ -147,20 +157,23 @@ public class AuthController {
     //AGENT FUNCTIONALITY
 
     //Create new property -- get form/screen
-    @GetMapping("/properties/add")
-    @PreAuthorize("hasRole('AGENT')")
+    @GetMapping("/agent/new_property")
     public String addPropertyForm(Model model) {
-        // not needed at the moment: userService.prepareAddPropertyModel(model);
+        userService.prepareNewPropertyModel(model);
         return "new_property";
     }
 
     //Post new property
-    @PostMapping("/properties/add")
-
-    @PreAuthorize("hasRole('AGENT')")
-    public String createProperty(@RequestBody Property property) {
-        userService.createProperty(property);
-        return "new_property";
+    @PostMapping("/agent/new_property")
+    public String createProperty(@RequestParam(required = true) String title,
+                                 @RequestParam(required = true) int price,
+                                 @RequestParam(required = true) String location,
+                                 @RequestParam(required = true) String description,
+                                 @RequestParam(required = true) int size
+                                )
+    {
+        userService.createProperty(new Property(title, price, location, description, size));
+        return "redirect:/agent/manage_listings";
     }
 
     //Get existing property by id and update it
@@ -178,16 +191,14 @@ public class AuthController {
     }
 
     //Returns a list of properties managed by the agent (current user)
-    @GetMapping("/properties/manage")
-    @PreAuthorize("hasRole('AGENT')")
+    @GetMapping("/agent/manage_listings")
     public String getManagedProperties(Model model) {
-        User agent = authService.getCurrentUser();
-        userService.prepareManagedListingsModel(agent, model);
+        userService.prepareManagedListingsModel(model);
         return "manage_listings";
     }
 
     //Get all messages for Agent
-    @GetMapping("/messages")
+    @GetMapping("/agent/messages")
     @PreAuthorize("hasRole('AGENT')")
     public String getMessages(Model model) {
         //User service adds Agent's list of messages to the model
@@ -196,7 +207,7 @@ public class AuthController {
     }
 
     //Agent replies to buyer messages
-    @GetMapping("/message")
+    @GetMapping("/agent/message")
     @PreAuthorize("hasRole('AGENT')")
     public String viewMessage(@RequestParam(name="id") Long id, Model model) {
         //User adds sender info and message to screen
@@ -208,17 +219,14 @@ public class AuthController {
 
 
     //Agent replies to buyer messages
-    @PostMapping("/message")
+    @PostMapping("/agent/message")
     @PreAuthorize("hasRole('AGENT')")
     public String viewMessage(@RequestParam(name="id") Long id, @RequestBody String reply) {
         //User adds sender info and message to screen
         userService.postMessageReply(id, reply);
         return "view_message";
     }
-
-
-
-    }
+}
 
 
 

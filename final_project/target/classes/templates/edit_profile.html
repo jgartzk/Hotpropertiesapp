@@ -5,13 +5,17 @@
     <title>Title</title>
 </head>
 <body>
-<form method="post" th:action="@{/profile/edit}" th:object="${user}">
+<h1>Edit Profile</h1>
+<form method="post" th:action="@{/profile/edit}">
     <label for="firstName">First Name: </label>
-    <input id="firstName" th:field="*{firstName}" th:value="${firstName}" type="text"/>
-    <label for="password">Last Name: </label>
-    <input id="password" th:field="*{lastName}" th:value="${lastName}" type="text"/>
+    <input id="firstName" th:value="${firstName}" name="firstName" type="text"/>
+    <br>
+    <label for="lastName">Last Name: </label>
+    <input id="lastName"  th:value="${lastName}" name="lastName" type="text"/>
+    <br>
     <label for="email">Email: </label>
-    <input id="email" th:field="*{email}" th:value="${email}" type="text"/>
+    <input id="email" th:value="${email}" name="email" type="text"/>
+    <br>
     <button type="submit">Save Changes</button>
 </form>
 <a th:href="@{/profile}">Cancel</a>

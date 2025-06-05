@@ -4,15 +4,12 @@ import edu.hotproperties.final_project.entities.Favorite;
 
 import edu.hotproperties.final_project.emuns.Role;
 
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import edu.hotproperties.final_project.entities.Message;
 
 import edu.hotproperties.final_project.entities.Property;
 import edu.hotproperties.final_project.entities.User;
 import edu.hotproperties.final_project.exceptions.*;
 import edu.hotproperties.final_project.repository.FavoriteRepository;
-import edu.hotproperties.final_project.emuns.Role;
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import edu.hotproperties.final_project.repository.MessageRepository;
 import edu.hotproperties.final_project.repository.PropertyRepository;
 import edu.hotproperties.final_project.repository.UserRepository;
@@ -31,13 +28,6 @@ import java.util.Optional;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import java.util.Set;
-import java.util.stream.Collectors;
-
-
-
-import java.util.Optional;
 
 
 @Service
@@ -110,11 +100,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void postEditProfile(String firstName, String lastName, String email)  {
+
+        //Get current user
+        User currentUser = getCurrentUserContext().user();
+
+        //Set posted fields
+        currentUser.setFirstName(firstName);
+        currentUser.setLastName(lastName);
+        currentUser.setEmail(email);
+
+        //Save update user details
+        userRepository.save(currentUser);
+
+    }
+
+    @Override
     public void prepareEditProfileModel(Model model) {
         CurrentUserContext context = getCurrentUserContext();
         model.addAttribute("firstName", context.user().getFirstName());
         model.addAttribute("lastName", context.user().getLastName());
         model.addAttribute("email", context.user().getEmail());
+        model.addAttribute("user", context.user());
     }
 
 
@@ -173,6 +180,7 @@ public class UserServiceImpl implements UserService {
         return property.orElseThrow(() -> new NotFoundException("Property not found: " + propertyId));
     }
 
+    @Override
     public void createProperty(Property property) {
         //Validate property, int must be positive and string must not be empty
         if (property.getPrice() > 0 &&
@@ -181,10 +189,13 @@ public class UserServiceImpl implements UserService {
             !property.getLocation().isEmpty() &&
             !property.getDescription().isEmpty()
         ) {
+
+            property.setAgent(getCurrentUserContext().user()); //Set agent to creator of agent
             propertyRepository.save(property);
         }
         //TODO: else throw InvalidPropertyException
     }
+
 
     @Override
     public void updateProperty(Long id, Property updatedProperty) {
@@ -204,9 +215,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void prepareManagedListingsModel(User agent, Model model) {
+    public void prepareManagedListingsModel(Model model) {
+        User agent = getCurrentUserContext().user();
         List<Property> properties = propertyRepository.findAllByAgent(agent);
+        model.addAttribute("role",agent.getRoles());
         model.addAttribute("properties", properties);
+    }
+    @Override
+    public void prepareNewPropertyModel(Model model){
+        model.addAttribute("property", new Property());
     }
 
     @Override

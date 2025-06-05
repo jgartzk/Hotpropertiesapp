@@ -6,7 +6,8 @@
 </head>
 <body>
     <h1>Add New Property</h1>
-    <form th:action="@{/proprties/add" th:object="${property}" method="post">
+    <a th:href="@{/dashboard}">Back To Dashboard</a>
+    <form th:action="@{/agent/new_property}" th:object="${property}" method="post" enctype="multipart/form-data">
         <label>Title: <input th:field="*{title}"/></label><br>
         <label>Price: <input th:field="*{price}"/></label><br>
         <label>Location: <input th:field="*{location}"/></label><br>
