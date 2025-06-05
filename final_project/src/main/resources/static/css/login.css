@@ -5,8 +5,9 @@ body {
     margin: 0;
     padding: 0;
     display: flex;
-    justify-content: center; /* centers horizontally */
-    align-items: flex-start; /* adjust vertical alignment as needed */
+    flex-direction:column;
+    justify-content: flex-start; /* vertically aligned to top */
+    align-items: center; /* adjust horizontal alignment as needed */
     min-height: 100vh; /* ensure full viewport height */
 }
 
@@ -18,8 +19,32 @@ form label {
 }
 
 .login-container {
+    list-style-type: none;
     text-align: center;
     width: 500px;
+    margin-top: 80px;
+    padding: 25px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.form-container {
+    list-style-type: none;
+    text-align: center;
+    width: 500px;
+    height: fit-content;
+    margin-top: 80px;
+    padding: 25px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+
+.property-container {
+    list-style-type: none;
+    text-align: center;
     margin-top: 80px;
     padding: 25px;
     background-color: white;
@@ -69,9 +94,7 @@ label {
     margin-bottom: 14px;
     text-align: center;
 }
-input[type="email"],
-input[type="text"],
-input[type="password"] {
+input {
     width: 100%;
     padding: 8px;
     margin-bottom: 15px;
@@ -82,7 +105,6 @@ input[type="password"] {
 ul.no-bullets {
     list-style-type: none;
     padding-left: 0;
-    margin: 0;
 }
 
 .error-message {
@@ -91,7 +113,7 @@ ul.no-bullets {
     margin-bottom: 10px;
 }
 
-button, .button {
+button {
     width: 100%;
     padding: 10px;
     background-color: #007BFF;
@@ -102,7 +124,48 @@ button, .button {
     cursor: pointer;
 }
 
-button:hover {
+.btn {
+    text-decoration:none;
+    padding: 10px;
+    margin-bottom: 20px;
+    background-color: #007BFF;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-delete {
+    text-decoration:none;
+    padding: 10px;
+    margin-bottom: 20px;
+    background-color: red;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    text-decoration:none;
+    padding: 10px;
+    margin-bottom: 20px;
+    background-color: gray;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-delete:hover {
+    background-color:orange;
+    color:red;
+}
+
+button:hover, .btn:hover {
     background-color: #0056b3;
 }
 
@@ -149,6 +212,7 @@ tr {
 }
 
 .property-card{
+    width: 800px;
     background: white;
     border-radius: 10px;
     display: flex;
@@ -188,4 +252,8 @@ tr {
     height: auto;
     margin-right: 20px;
     border-radius: 5px;
+}
+
+li {
+    margin-bottom:20px;
 }

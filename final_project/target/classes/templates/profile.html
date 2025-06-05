@@ -6,6 +6,7 @@
     <link rel="stylesheet" th:href="@{/css/login.css}"/>
 </head>
 <body>
+<div class="login-container">
     <table>
         <tr>
             <td><strong>First Name: </strong></td>
@@ -25,7 +26,8 @@
         </tr>
     </table>
     <br>
-    <a th:href="@{/profile/edit}">Edit Profile</a>
-    <a th:href="@{/dashboard}">Back to Dashboard</a>
+    <a class="btn" th:href="@{/dashboard}">Back to Dashboard</a>
+    <a class="btn" th:href="@{/profile/edit}">Edit Profile</a>
+</div>
 </body>
 </html>

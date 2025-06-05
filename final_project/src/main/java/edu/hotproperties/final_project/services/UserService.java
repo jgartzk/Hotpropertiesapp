@@ -40,7 +40,7 @@ public interface UserService {
     void createProperty(Property property);
 
     //@PreAuthorize("hasRole('AGENT')")
-    void updateProperty(Long id, Property property);
+    void updateProperty(Long id, String title, Double price, String location, String description, int size);
 
     //@PreAuthorize("hasRole('AGENT')")
     void prepareEditPropertyModel(Long id, Model model);

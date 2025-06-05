@@ -20,7 +20,7 @@
     </p>
 </div>
 <div class="property-list">
-    <div class = "property-card" th:each="property : ${properties}">
+    <div class="property-container" th:each="property : ${properties}">
         <img th:src="${property.images[0]}" alt="Property Image" class="property-img">
         <h3>
             <a th:href="@{/properties/view(name=${property.id})}" th:text="${property.title}"></a>

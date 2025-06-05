@@ -166,7 +166,7 @@ public class AuthController {
     //Post new property
     @PostMapping("/agent/new_property")
     public String createProperty(@RequestParam(required = true) String title,
-                                 @RequestParam(required = true) int price,
+                                 @RequestParam(required = true) Double price,
                                  @RequestParam(required = true) String location,
                                  @RequestParam(required = true) String description,
                                  @RequestParam(required = true) int size
@@ -178,16 +178,24 @@ public class AuthController {
 
     //Get existing property by id and update it
 
-    @PostMapping("/properties/edit")
-    @PreAuthorize("hasRole('AGENT')")
-    public void editProperty(@RequestParam(name="id") Long id, @ModelAttribute("property") Property property) {
-        userService.updateProperty(id, property); //returns updated property
+    @PostMapping("/agent/edit_listing")
+    //@PreAuthorize("hasRole('AGENT')")
+    public String editProperty(@RequestParam(name="id") Long id,
+                               @RequestParam(required = true) String title,
+                               @RequestParam(required = true) Double price,
+                               @RequestParam(required = true) String location,
+                               @RequestParam(required = true) String description,
+                               @RequestParam(required = true) int size
+                               ) {
+        userService.updateProperty(id, title, price, location, description, size); //returns updated property
+        return "redirect:/agent/manage_listings";
     }
 
-    @GetMapping("/properties/edit")
-    @PreAuthorize("hasRole('AGENT')")
-    public void prepareEditPropertyModel(@RequestParam(name="id") Long id, Model model) {
+    @GetMapping("/agent/edit_listing")
+    //@PreAuthorize("hasRole('AGENT')")
+    public String prepareEditPropertyModel(@RequestParam(name="id") Long id, Model model) {
         userService.prepareEditPropertyModel(id, model); //returns updated property
+        return "edit_listing";
     }
 
     //Returns a list of properties managed by the agent (current user)

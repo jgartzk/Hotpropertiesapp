@@ -3,16 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}"/>
 </head>
 <body>
-<h1>Edit Property</h1>
-<form th:action="@{/properties/edit(id=${property.id})}" th:object="${property}" method="post">
-    <label>Title: <input th:field="*{title}" th:value="${property.title}"/></label><br>
-    <label>Price: <input th:field="*{price}" th:value="${property.price}"/></label><br>
-    <label>Location: <input th:field="*{location}" th:value="${property.location}"/></label><br>
-    <label>Description: <input th:field="*{description}" th:value="${property.description}"/></label><br>
-    <label>Size: <input th:field="*{size}" th:value="${property.size}"/></label><br>
-    <button type="submit">Add Property</button>
-</form>
+<h1>Edit Listing</h1>
+<a th:href="@{/agent/manage_listings}">Back To Properties</a>
+<div class="property-container">
+    <form th:action="@{/agent/edit_listing(id=${id})}" method="post">
+        <label>Title: <input name="title" th:value="${title}"/></label><br>
+        <label>Price: <input name="price" th:value="${price}"/></label><br>
+        <label>Location: <input name="location" th:value="${location}"/></label><br>
+        <label>Description: <input name="description" th:value="${description}"/></label><br>
+        <label>Size: <input name="size" th:value="${size}"/></label><br>
+        <button class="btn" type="submit">Update Listing</button>
+    </form>
+</div>
 </body>
 </html>
