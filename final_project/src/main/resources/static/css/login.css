@@ -91,7 +91,7 @@ ul.no-bullets {
     margin-bottom: 10px;
 }
 
-button {
+button, .button {
     width: 100%;
     padding: 10px;
     background-color: #007BFF;
@@ -175,6 +175,7 @@ tr {
     border-radius: 4px;
     cursor: pointer;
 }
+
 
 .property-entry {
     display: flex;
