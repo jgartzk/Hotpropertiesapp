@@ -120,6 +120,9 @@ public class AuthController {
     public String viewing(@RequestParam String title, Model model) {
         Property priority = userService.getProperty(title);
         model.addAttribute("property",priority);
+        User current = authService.getCurrentUser();
+        boolean button = userService.isFavorite(current, priority);
+        model.addAttribute("button",button);
         return "property_details";
     }
 
@@ -132,11 +135,20 @@ public class AuthController {
         return "favorites";
     }
 
+    @DeleteMapping("/favorites/remove")
+    @PreAuthorize("hasRole('BUYER')")
+    public String removeFavorite(@RequestParam Long propertyId) {
+        User current = authService.getCurrentUser();
+        Property property = userService.getPropertyById(propertyId);
+        userService.removeFavorite(current, property);
+        return "redirect:/favorites/favorites";
+    }
+
     //AGENT FUNCTIONALITY
 
     //Create new property -- get form/screen
     @GetMapping("/properties/add")
-    @PreAuthorize("hasRole('AGENT'")
+    @PreAuthorize("hasRole('AGENT')")
     public String addPropertyForm(Model model) {
         // not needed at the moment: userService.prepareAddPropertyModel(model);
         return "new_property";
@@ -176,7 +188,7 @@ public class AuthController {
 
     //Get all messages for Agent
     @GetMapping("/messages")
-    @PreAuthorize("hasRole('AGENT'")
+    @PreAuthorize("hasRole('AGENT')")
     public String getMessages(Model model) {
         //User service adds Agent's list of messages to the model
         userService.prepareMessagesModel(model);
@@ -185,7 +197,7 @@ public class AuthController {
 
     //Agent replies to buyer messages
     @GetMapping("/message")
-    @PreAuthorize("hasRole('AGENT'")
+    @PreAuthorize("hasRole('AGENT')")
     public String viewMessage(@RequestParam(name="id") Long id, Model model) {
         //User adds sender info and message to screen
         userService.prepareViewMessageModel(id, model);

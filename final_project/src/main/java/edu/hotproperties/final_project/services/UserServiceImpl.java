@@ -144,12 +144,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Favorite removeFavorite(Favorite favorite) {
-        Favorite temp = favorite;
-        if(favoriteExists(favorite.getUser(), favorite.getProperty()))
-            throw new NotFoundException("Favorite doesn't exist: " + favorite.getProperty());
+    public Favorite removeFavorite(User user, Property property) {
+        if(favoriteExists(user, property))
+            throw new NotFoundException("Favorite doesn't exist: " + property.getTitle());
+        Favorite favorite = favoriteRepository.findByPropertyAndUser(user, property);
         favoriteRepository.delete(favorite);
-        return temp;
+        return favorite;
     }
 
     @Override
@@ -157,6 +157,20 @@ public class UserServiceImpl implements UserService {
         validFavorite(favorite);
         favoriteRepository.save(favorite);
         return favorite;
+    }
+
+    @Override
+    public boolean isFavorite(User user, Property property) {
+        Property favorite = favoriteRepository.findByUserAndProperty(user, property);
+        if(favorite != null)
+            return true;
+        return false;
+    }
+
+    @Override
+    public Property getPropertyById(Long propertyId) {
+        Optional<Property> property = propertyRepository.findById(propertyId);
+        return property.orElseThrow(() -> new NotFoundException("Property not found: " + propertyId));
     }
 
     public void createProperty(Property property) {

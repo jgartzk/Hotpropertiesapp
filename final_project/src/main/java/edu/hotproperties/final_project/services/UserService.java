@@ -54,13 +54,14 @@ public interface UserService {
 //    Message messageReply(Message message);
 
     @PreAuthorize("hasRole('BUYER')")
-    Favorite removeFavorite(Favorite favorite);
+    Favorite removeFavorite(User user, Property property);
 
     @PreAuthorize("hasRole('BUYER')")
     Favorite addFavorite(Favorite favorite);
 
+    boolean isFavorite(User user, Property property);
 
-
+    Property getPropertyById(Long id);
 
     void postMessageReply(Long id, String reply);
 

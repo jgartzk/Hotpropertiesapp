@@ -8,21 +8,24 @@
 <body>
 <div class="login-container">
     <h1 th:text="'Hello, ' + ${user.firstName} + ' ' + ${user.lastName} + '!'">Hello!</h1>
+    <p class="profile-table">
+        Role -
+        <span th:if="${#authorization.expression('hasRole(''BUYER'')')}" th:text="'Buyer'">Buyer</span>
+        <span th:if="${#authorization.expression('hasRole(''AGENT'')')}" th:text="'Agent'">Agent</span>
+        <span th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:text="'Admin'">Admin</span>
+    </p>
     <p class="profile-table">Welcome to your dashboard.</p>
     <ul class="no-bullets">
-
-        <li><a th:href="@{/profile}">My Profile</a></li>
-
         <li th:if="${#authorization.expression('hasRole(''BUYER'')')}">
-            <a th:href="@{/properties/list}">Browse Properties</a>
-            <a th:href="@{/favorites/favorites}">Saved Favorites</a>
-            <a th:href="@{/manager/team}">View Messages</a>
-        </li>
+        <li><a th:href="@{/profile}">View Profile</a></li>
+        <li><a th:href="@{/settings}">Account Settings</a></li>
+        <li><a th:href="@{/favorites}">Favorites</a></li>
+        <li><a th:href="@{/view_message}">View Messages</a></li>
 
         <li th:if="${#authorization.expression('hasRole(''AGENT'')')}">
-            <a th:href="@{/properties/manage}">Manage Listings</a>
-            <a th:href="@{/properties/add}">Add New Property</a>
-            <a th:href="@{/messages}">View Messages</a>
+            <a th:href="@{/manage_listings}">Manage Listings</a>
+            <a th:href="@{/new_property}">Add New Property</a>
+            <a th:href="@{/view_message}">View Messages</a>
         </li>
 
         <li th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
