@@ -142,3 +142,49 @@ tr {
 .checkbox-margin { margin-right: 6px; }
 .profile-table { width: 100%; margin-top: 20px; border-collapse: collapse; }
 .section-spacing { margin-top: 20px; }
+
+.property-list{
+    display: flex;
+    gap: 20px;
+}
+
+.property-card{
+    background: white;
+    border-radius: 10px;
+    display: flex;
+}
+
+.remove-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #FF0000;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.add-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007BFF;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.property-entry {
+    display: flex;
+    margin: 15px 0;
+    align-items: flex-start;
+}
+
+.property-img {
+    width: 180px;
+    height: auto;
+    margin-right: 20px;
+    border-radius: 5px;
+}

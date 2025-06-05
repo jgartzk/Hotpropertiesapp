@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html xmlns:sec="https://www.thymeleaf.org/extras/spring-security" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>User Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}"/>
+</head>
+<body>
+<div>
+    <p style="text-align: left; margin-top: 15px;">
+        <a th:href="@{/dashboard}">
+            <button class="button">← Dashboard</button>
+        </a>
+    </p>
+
+    <p style="text-align: right; margin-top: 15px;">
+        <a th:href="@{/dashboard}">
+            <button class="button">&larr; Dashboard</button>
+        </a>
+    </p>
+</div>
+<div class="favorites-container">
+    <h2>My Favorite Properties</h2>
+
+    <div th:each="property : ${favoriteProperties}">
+        <div class="property-entry">
+            <img th:src="${property.images[0]}" alt="Property Image" class="property-img">
+
+            <div>
+                <h4>
+                    <b>
+                        <a th:href="@{/properties/view(id=${property.id})}" th:text="${property.title}"></a>
+                    </b>
+                </h4>
+                <p><b>Price: $</b> <span th:text="${property.price}"></span></p>
+                <p><b>Location: </b> <span th:text="${property.location}"></span></p>
+                <p><b>Size: </b> <span th:text="${property.size} + ' sq ft'"></span></p>
+
+                <div class="buttons">
+                    <a th:href="@{/properties/view(id=${property.id})}" class="button">View Details</a>
+
+                    <form th:action="@{/favorites/remove}" method="post" onsubmit="return confirm('Want to remove from favorites?');" style="display: inline;">
+                        <input type="hidden" name="propertyId" th:value="${property.id}" />
+                        <button type="submit" class="btn btn-remove">Remove</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <hr />
+    </div>
+
+    <div style="margin-top: 20px;">
+        <a href="/dashboard" class="back-link">&larr; Back to Dashboard</a>
+    </div>
+</div>
+</body>
+</html>
