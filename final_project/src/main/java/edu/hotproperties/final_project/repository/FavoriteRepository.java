@@ -15,4 +15,6 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 
 
     Property findByUserAndProperty(edu.hotproperties.final_project.entities.User user, Property property);
+
+    Favorite findByPropertyAndUser(edu.hotproperties.final_project.entities.User user, Property property);
 }
