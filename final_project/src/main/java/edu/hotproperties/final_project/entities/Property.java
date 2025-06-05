@@ -114,8 +114,8 @@ public class Property {
         return messages;
     }
 
-    public void setMessages(List<Message> messages) {
-        this.messages = messages;
+    public void addMessage(Message message) {
+        this.messages.add(message);
     }
 
     public void setImages(List<PropertyImage> images) {

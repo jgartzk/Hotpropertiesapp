@@ -40,7 +40,7 @@ public interface UserService {
     void createProperty(Property property);
 
     //@PreAuthorize("hasRole('AGENT')")
-    void updateProperty(Long id, Property property);
+    void updateProperty(Long id, String title, Double price, String location, String description, int size);
 
     //@PreAuthorize("hasRole('AGENT')")
     void prepareEditPropertyModel(Long id, Model model);
@@ -59,10 +59,14 @@ public interface UserService {
 //    @PreAuthorize("hasRole('Agent')")
 //    Message messageReply(Message message);
 
-    @PreAuthorize("hasRole('BUYER')")
+    void preparePropertyView(Long id, Model model);
+
+    void sendMessage(Long id, String message);
+
+    //@PreAuthorize("hasRole('BUYER')")
     Favorite removeFavorite(User user, Property property);
 
-    @PreAuthorize("hasRole('BUYER')")
+    //@PreAuthorize("hasRole('BUYER')")
     Favorite addFavorite(Favorite favorite);
 
     boolean isFavorite(User user, Property property);

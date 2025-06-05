@@ -3,10 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}"/>
 </head>
 <body>
     <h1>Messages</h1>
-    <a th:href="@{/dashboard}">Back to Dashboard</a>
+
+    <p style="text-align: left; margin-top: 15px;">
+        <a th:href="@{/dashboard}">
+            <button class="button">← Dashboard</button>
+        </a>
+    </p>
+
     <li th:each="message : ${messages}">
         <h2 th:text="${message.sender}: {message.property.title}"></h2>
         <h4 th:text="${message.timestamp}"></h4>

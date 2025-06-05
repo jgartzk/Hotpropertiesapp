@@ -14,6 +14,7 @@ import edu.hotproperties.final_project.repository.MessageRepository;
 import edu.hotproperties.final_project.repository.PropertyRepository;
 import edu.hotproperties.final_project.repository.UserRepository;
 import edu.hotproperties.final_project.utils.CurrentUserContext;
+import jakarta.el.PropertyNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -198,19 +199,46 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void updateProperty(Long id, Property updatedProperty) {
+    public void updateProperty(Long id, String title, Double price, String location, String description, int size) {
         //Get existing property from db
-        Property property = propertyRepository.getById(id);
-        //TODO: if property==null throw PropertyNotFound
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new PropertyNotFoundException("Property with id {"+id+"} not found"));
 
         //update with changes
-        property.setTitle(updatedProperty.getTitle());
-        property.setPrice(updatedProperty.getPrice());
-        property.setDescription(updatedProperty.getDescription());
-        property.setLocation(updatedProperty.getLocation());
-        property.setSize(updatedProperty.getSize());
+        property.setTitle(title);
+        property.setPrice(price);
+        property.setDescription(location);
+        property.setLocation(description);
+        property.setSize(size);
+        property.setSize(size);
 
         //save changes
+        propertyRepository.save(property);
+    }
+    @Override
+    public void preparePropertyView(Long id, Model model) {
+
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new PropertyNotFoundException("Property with id {"+id+"} not found"));
+
+        model.addAttribute("property",property);
+        model.addAttribute("id", id);
+
+        User buyer = getCurrentUserContext().user();
+        //boolean button = isFavorite(buyer, property);
+        //.addAttribute("button",button);
+    }
+
+    @Override
+    public void sendMessage(Long id, String message) {
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new PropertyNotFoundException("Property with id {"+id+"} not found"));
+
+        User buyer = getCurrentUserContext().user();
+        Message newMessage = new Message(message, property, buyer);
+        messageRepository.save(newMessage);
+
+        property.addMessage(newMessage);
         propertyRepository.save(property);
     }
 
@@ -235,8 +263,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void prepareEditPropertyModel(Long id, Model model){
-        Property property = propertyRepository.getById(id);
-        model.addAttribute("property", property);
+            Property property = propertyRepository.findById(id)
+                    .orElseThrow(() -> new PropertyNotFoundException("Property with id {"+id+"} not found"));
+                model.addAttribute("id", id);
+                model.addAttribute("title", property.getTitle());
+                model.addAttribute("price", property.getPrice());
+                model.addAttribute("location", property.getLocation());
+                model.addAttribute("description", property.getDescription());
+                model.addAttribute("size", property.getSize());
     }
 
     @Override

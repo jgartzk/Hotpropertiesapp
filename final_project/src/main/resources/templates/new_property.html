@@ -3,17 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}"/>
 </head>
 <body>
     <h1>Add New Property</h1>
-    <a th:href="@{/dashboard}">Back To Dashboard</a>
-    <form th:action="@{/agent/new_property}" th:object="${property}" method="post" enctype="multipart/form-data">
-        <label>Title: <input th:field="*{title}"/></label><br>
-        <label>Price: <input th:field="*{price}"/></label><br>
-        <label>Location: <input th:field="*{location}"/></label><br>
-        <label>Description: <input th:field="*{description}"/></label><br>
-        <label>Size: <input th:field="*{size}"/></label><br>
-        <button type="submit">Add Property</button>
-    </form>
+
+    <p style="text-align: left; margin-top: 15px;">
+        <a th:href="@{/dashboard}">
+            <button class="button">← Dashboard</button>
+        </a>
+    </p>
+
+    <div class="login-container">
+        <form th:action="@{/agent/new_property}" th:object="${property}" method="post" enctype="multipart/form-data">
+            <label>Title: <input th:field="*{title}"/></label><br>
+            <label>Price: <input th:field="*{price}"/></label><br>
+            <label>Location: <input th:field="*{location}"/></label><br>
+            <label>Description: <input th:field="*{description}"/></label><br>
+            <label>Size: <input th:field="*{size}"/></label><br>
+            <button type="submit" class="btn">Add Property</button>
+        </form>
+    </div>
 </body>
 </html>
