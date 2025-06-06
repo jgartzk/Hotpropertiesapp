@@ -10,7 +10,7 @@
 
     <p style="text-align: left; margin-top: 15px;">
         <a th:href="@{/dashboard}">
-            <button class="button">← Dashboard</button>
+            <button class="btn">← Dashboard</button>
         </a>
     </p>
 
@@ -31,7 +31,7 @@
                 <h4 th:text="${property.size}"></h4>
                 <p th:text="${property.description}"></p>
                 <a class="btn" th:href="@{/agent/edit_listing(id=${property.id})}">Manage Property</a>
-                <a class="btn" th:href="@{/agent/delete_listing(id=${property.id})}">Delete</a>
+                <a class="btn-delete" th:href="@{/agent/delete_listing(id=${property.id})}">Delete</a>
             </div>
         </div>
     </ul>
