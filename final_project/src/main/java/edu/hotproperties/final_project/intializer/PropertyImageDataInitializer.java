@@ -13,7 +13,8 @@ import java.util.List;
 public class PropertyImageDataInitializer {
     private final PropertyImageRepository propertyImageRepository;
     private final PropertyRepository propertyRepository;
-    public PropertyImageDataInitializer(PropertyImageRepository propertyImageRepository, PropertyRepository propertyRepository) {
+
+    public PropertiesDataInitializer(PropertyImageRepository propertyImageRepository, PropertyRepository propertyRepository) {
         this.propertyImageRepository = propertyImageRepository;
         this.propertyRepository = propertyRepository;
     }
