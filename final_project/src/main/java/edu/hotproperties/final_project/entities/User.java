@@ -72,6 +72,13 @@ public class User {
         return roles;
     }
 
+    public void addRole(Role role) {
+        if (this.roles == null) {
+            setRoles(new HashSet<Role>());
+        }
+        this.roles.add(role);
+    }
+
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }

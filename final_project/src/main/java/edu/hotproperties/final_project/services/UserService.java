@@ -1,5 +1,6 @@
 package edu.hotproperties.final_project.services;
 
+import edu.hotproperties.final_project.emuns.Role;
 import edu.hotproperties.final_project.entities.Favorite;
 import edu.hotproperties.final_project.entities.Message;
 import edu.hotproperties.final_project.entities.Property;
@@ -26,7 +27,7 @@ public interface UserService {
     @PreAuthorize("hasRole('BUYER')")
     List<Property> getFavorites(User user);
 
-    User registerNewUser(User user, List<String> roleNames);
+    User registerNewUser(User user, Role role);
 
     User getCurrentUser();
 
@@ -74,6 +75,11 @@ public interface UserService {
     Property getPropertyById(Long id);
 
     void postMessageReply(Long id, String reply);
+
+    void prepareViewUsersModel(Model model);
+    void deleteUser(Long id);
+
+    void prepareCreateAgentModel(Model model);
 
 }
 

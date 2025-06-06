@@ -21,14 +21,14 @@
             <li><a th:href="@{/profile}">My Profile</a></li>
             <li><a th:href="@{/buyer/properties/list}">Browse Properties</a></li>
             <li><a  th:href="@{/buyer/favorites}">Saved Favorites</a></li>
-            <li><a th:href="@{/buyer/view_message}">View Messages</a></li>
+            <li><a th:href="@{/messages}">View Messages</a></li>
         </ul>
 
         <ul th:if="${#authorization.expression('hasRole(''AGENT'')')}" class="no-bullets">
             <li><a  th:href="@{/profile}">My Profile</a></li>
             <li><a th:href="@{/agent/manage_listings}">Manage Listings</a></li>
             <li><a th:href="@{/agent/new_property}">Add New Property</a></li>
-            <li><a th:href="@{/agent/messages}">View Messages</a></li>
+            <li><a th:href="@{/messages}">View Messages</a></li>
         </ul>
 
         <ul th:if="${#authorization.expression('hasRole(''ADMIN'')')}" class="no-bullets">
@@ -37,7 +37,7 @@
             <li><a th:href="@{/admin/create_agent}">Create Agent</a></li>
         </ul>
 
-        <a class="btn-delete" th:href="@{/logout}">Log Out</a>
+        <a class="btn-cancel" th:href="@{/logout}">Log Out</a>
 </div>
 </body>
 </html>

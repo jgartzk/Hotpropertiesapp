@@ -1,5 +1,6 @@
 package edu.hotproperties.final_project.controller;
 
+import edu.hotproperties.final_project.emuns.Role;
 import edu.hotproperties.final_project.entities.Message;
 import edu.hotproperties.final_project.entities.Property;
 import edu.hotproperties.final_project.services.AuthService;
@@ -16,6 +17,7 @@ import edu.hotproperties.final_project.entities.User;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -68,12 +70,11 @@ public class AuthController {
 
     @PostMapping("/register")
     public String registerUser(@ModelAttribute("user") User user,
-                               @RequestParam("selectedRoles") List<String> roleNames,
                                @RequestParam(value = "file", required = false) MultipartFile file,
                                RedirectAttributes redirectAttributes) {
         try {
             // First, register the user (this will assign them an ID)
-            User savedUser = userService.registerNewUser(user, roleNames);
+            User savedUser = userService.registerNewUser(user, Role.BUYER);
 
             redirectAttributes.addFlashAttribute("successMessage", "Registration successful.");
             return "redirect:/login";
@@ -152,11 +153,27 @@ public class AuthController {
 
     @PostMapping("buyer/message")
     //@PreAuthorize("hasRole('BUYER')")
-    public void contactAgent(@RequestParam(required = true) Long id,
+    public String contactAgent(@RequestParam(required = true) Long id,
                                @RequestParam(required = true) String message)
     {
         userService.sendMessage(id, message);
+        return "redirect:/buyer/properties/view?id=" + id;
     }
+
+    @GetMapping("/messages")
+    //@PreAuthorize("hasRole('BUYER')")
+    public String viewBuyerMessages(Model model) {
+        userService.prepareMessagesModel(model);
+        return "messages";
+    }
+
+    @GetMapping("/message")
+    //@PreAuthorize("hasRole('BUYER')")
+    public String viewBuyerMessages(@RequestParam(required=true) Long id, Model model) {
+        userService.prepareViewMessageModel(id, model);
+        return "view_message";
+    }
+
 
 
     //AGENT FUNCTIONALITY
@@ -210,35 +227,41 @@ public class AuthController {
         return "manage_listings";
     }
 
-    //Get all messages for Agent
-    @GetMapping("/agent/messages")
-    @PreAuthorize("hasRole('AGENT')")
-    public String getMessages(Model model) {
-        //User service adds Agent's list of messages to the model
-        userService.prepareMessagesModel(model);
-        return "messages";
-    }
 
     //Agent replies to buyer messages
-    @GetMapping("/agent/message")
-    @PreAuthorize("hasRole('AGENT')")
-    public String viewMessage(@RequestParam(name="id") Long id, Model model) {
-        //User adds sender info and message to screen
-        userService.prepareViewMessageModel(id, model);
-        return "view_message";
-    }
-
-    //Get all messages for Agent
-
-
-    //Agent replies to buyer messages
-    @PostMapping("/agent/message")
+    @PostMapping("/agent/message/reply")
     @PreAuthorize("hasRole('AGENT')")
     public String viewMessage(@RequestParam(name="id") Long id, @RequestBody String reply) {
         //User adds sender info and message to screen
         userService.postMessageReply(id, reply);
-        return "view_message";
+        return "redirect:/message?id=" + id;
     }
+
+    //ADMIN FUNCTIONALITY
+    @GetMapping("/admin/users")
+    public String viewUsers(Model model) {
+        userService.prepareViewUsersModel(model);
+        return "users";
+    }
+
+    @GetMapping("/admin/users/delete")
+    public String deleteUser(@RequestParam(required = true) Long id) {
+        userService.deleteUser(id);
+        return "redirect:/admin/users";
+    }
+
+    @GetMapping("/admin/create_agent")
+    public String createAgent(Model model) {
+        model.addAttribute("user", new User());
+        return "create_agent";
+    }
+
+    @PostMapping("/admin/create_agent")
+    public String createAgent(@ModelAttribute("user") User user) {
+        userService.registerNewUser(user, Role.AGENT);
+        return "redirect:/admin/users";
+    }
+
 }
 
 

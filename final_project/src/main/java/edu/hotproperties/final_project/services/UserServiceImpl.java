@@ -61,20 +61,9 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User registerNewUser(User user, List<String> roleNames) {
-        Set<Role> roles = roleNames.stream()
-                .map(roleName -> {
-                    try {
+    public User registerNewUser(User user, Role role) {
 
-                        String role = roleName.toUpperCase().replaceFirst("^ROLE_", "");
-                        return Role.valueOf(role);
-                    } catch (IllegalArgumentException e) {
-                        throw new RuntimeException("Role used is not valid: " + roleName);
-                    }
-                })
-                .collect(Collectors.toSet());
-
-        user.setRoles(roles);
+        user.addRole(role);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreatedAt(LocalDateTime.now());
         userRepository.save(user);
@@ -221,6 +210,7 @@ public class UserServiceImpl implements UserService {
         Property property = propertyRepository.findById(id)
                 .orElseThrow(() -> new PropertyNotFoundException("Property with id {"+id+"} not found"));
 
+
         model.addAttribute("property",property);
         model.addAttribute("id", id);
 
@@ -246,6 +236,7 @@ public class UserServiceImpl implements UserService {
     public void prepareManagedListingsModel(Model model) {
         User agent = getCurrentUserContext().user();
         List<Property> properties = propertyRepository.findAllByAgent(agent);
+
         model.addAttribute("role",agent.getRoles());
         model.addAttribute("properties", properties);
     }
@@ -257,8 +248,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public void prepareViewMessageModel(Long id, Model model) {
         //Get message by id and return it to model
-        Message message = messageRepository.getById(id);
+        Message message = messageRepository.findById(id)
+                .orElseThrow(() -> new PropertyNotFoundException("Property with id {"+id+"} not found"));
+
+        if (getCurrentUserContext().user().getRoles().contains(Role.AGENT)) {
+            model.addAttribute("isAgent", true);
+        }
         model.addAttribute("message", message);
+
     }
 
     @Override
@@ -283,24 +280,47 @@ public class UserServiceImpl implements UserService {
         messageRepository.save(message);
     }
 
-  
+
   public void prepareMessagesModel(Model model) {
         List<Message> messages = new ArrayList<Message>();
 
         //Get current user (Agent)
-        User currentUser = getCurrentUserContext().user();
+        User user = getCurrentUserContext().user();
 
-        //For all properties managed by agent
-        List<Property> properties = propertyRepository.findAllByAgent(currentUser);
-        for (Property property : properties) {
-            //If message exists at property, add to the model
-            if (messageRepository.existsByProperty(property)) {
-               messages.add(messageRepository.getByProperty(property));
-
-            }
+        if (user.getRoles().contains(Role.BUYER)) {
+            messages = messageRepository.findAllBySender(user);
         }
+        else if (user.getRoles().contains(Role.AGENT)) {
+              //For all properties managed by agent
+              List<Property> properties = propertyRepository.findAllByAgent(user);
+              for (Property property : properties) {
+                  //If message exists at property, add to the model
+                  if (messageRepository.existsByProperty(property)) {
+                      messages.addAll(messageRepository.findAllByProperty(property));
+                  }
+              }
+        }
+
         //Add all messages to model
         model.addAttribute("messages", messages);
+    }
+
+    public void prepareViewUsersModel(Model model) {
+        List<User> users = userRepository.findAll();
+        model.addAttribute("users", users);
+    }
+
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    public void prepareCreateAgentModel(Model model){
+        model.addAttribute("user", new User());
+    }
+
+    public void postNewAgent(User agent) {
+        agent.addRole(Role.AGENT);
+        userRepository.save(agent);
     }
 
     //////////////////////////////////////////////////////

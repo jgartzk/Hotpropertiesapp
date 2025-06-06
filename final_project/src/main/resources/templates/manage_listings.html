@@ -14,7 +14,11 @@
         </a>
     </p>
 
-    <p th:if="${properties} == null">You do not have any managed listings</p>
+    <div class="login-container" th:if="${properties==null or properties.empty}">
+        <p>You do not have any managed listings.</p>
+        <br>
+        <a class="btn" th:href="@{/agent/new_property}">Create Listing</a>
+    </div>
 
     <ul class="no-bullets" th:each="property : ${properties}">
         <div class="property-container">

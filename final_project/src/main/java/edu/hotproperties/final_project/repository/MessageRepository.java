@@ -24,5 +24,10 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     boolean existsByProperty(Property property);
 
+    List<Message> findAllBySender(User user);
+
+    List<Message> findAllByProperty(Property property);
+
+
 
 }
