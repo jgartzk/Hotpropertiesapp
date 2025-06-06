@@ -14,7 +14,7 @@ public class PropertyImageDataInitializer {
     private final PropertyImageRepository propertyImageRepository;
     private final PropertyRepository propertyRepository;
 
-    public PropertiesDataInitializer(PropertyImageRepository propertyImageRepository, PropertyRepository propertyRepository) {
+    public PropertyImageDataInitializer(PropertyImageRepository propertyImageRepository, PropertyRepository propertyRepository) {
         this.propertyImageRepository = propertyImageRepository;
         this.propertyRepository = propertyRepository;
     }
@@ -160,6 +160,6 @@ public class PropertyImageDataInitializer {
                 );
 
         propertyImageRepository.saveAll(autos);
-        System.out.println("Initialized 18 properties");
+        System.out.println("Initialized 107 images");
     }
 }
