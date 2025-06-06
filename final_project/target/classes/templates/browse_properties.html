@@ -15,6 +15,9 @@
     </p>
 </div>
 <div class="property-list">
+    <div class="login-container" th:if="${properties==null or properties.empty}">
+        <p>There are no properties to view.</p>
+    </div>
     <div class="property-container" th:each="property : ${properties}">
         <!--<img th:src="${property.images[0]}" alt="Property Image" class="property-img">-->
         <h3>

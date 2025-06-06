@@ -15,6 +15,7 @@
 </p>
 
 <div class="property-container">
+    <p th:if="${errorMessage!=null and not errorMessage.empty}" th:text="${errorMessage}" style="color:red;"></p>
     <form th:action="@{/agent/edit_listing(id=${id})}" method="post">
         <label>Title: <input name="title" th:value="${title}"/></label><br>
         <label>Price: <input name="price" th:value="${price}"/></label><br>

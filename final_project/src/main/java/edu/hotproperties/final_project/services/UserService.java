@@ -1,13 +1,11 @@
 package edu.hotproperties.final_project.services;
 
-import edu.hotproperties.final_project.emuns.Role;
+import edu.hotproperties.final_project.enums.Role;
 import edu.hotproperties.final_project.entities.Favorite;
-import edu.hotproperties.final_project.entities.Message;
 import edu.hotproperties.final_project.entities.Property;
 import edu.hotproperties.final_project.entities.User;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -24,9 +22,6 @@ public interface UserService {
     @PreAuthorize("hasAnyRole('BUYER','Agent')")
     Property getProperty(String title);
 
-    @PreAuthorize("hasRole('BUYER')")
-    List<Property> getFavorites(User user);
-
     User registerNewUser(User user, Role role);
 
     User getCurrentUser();
@@ -35,7 +30,7 @@ public interface UserService {
     void postEditProfile(String firstName, String lastName, String email);
 
     @PreAuthorize("isAuthenticated()")
-    void prepareEditProfileModel(Model model);
+    void prepareEditProfileModel(Model model,boolean err);
 
     //@PreAuthorize("hasRole('AGENT')")
     void createProperty(Property property);
@@ -44,7 +39,7 @@ public interface UserService {
     void updateProperty(Long id, String title, Double price, String location, String description, int size);
 
     //@PreAuthorize("hasRole('AGENT')")
-    void prepareEditPropertyModel(Long id, Model model);
+    void prepareEditPropertyModel(Long id, Model model, boolean err);
 
     //@PreAuthorize("hasRole('AGENT')")
     void prepareManagedListingsModel(Model model);
@@ -53,7 +48,7 @@ public interface UserService {
     void prepareMessagesModel(Model model);
 
     //@PreAuthorize("hasRole('AGENT')")
-    void prepareNewPropertyModel(Model model);
+    void prepareNewPropertyModel(Model model, boolean err);
     //@PreAuthorize("hasRole('AGENT')")
     void prepareViewMessageModel(Long id, Model model);
 
@@ -65,12 +60,10 @@ public interface UserService {
     void sendMessage(Long id, String message);
 
     //@PreAuthorize("hasRole('BUYER')")
-    Favorite removeFavorite(User user, Property property);
+    void removeFavorite(Long id);
 
     //@PreAuthorize("hasRole('BUYER')")
-    Favorite addFavorite(Favorite favorite);
-
-    boolean isFavorite(User user, Property property);
+    void addFavorite(Long id);
 
     Property getPropertyById(Long id);
 
@@ -81,5 +74,8 @@ public interface UserService {
 
     void prepareCreateAgentModel(Model model);
 
+    void deleteListing(Long id);
+
+    void prepareFavoritesModel(Model model);
 }
 

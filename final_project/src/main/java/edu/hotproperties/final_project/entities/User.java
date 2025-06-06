@@ -2,7 +2,7 @@ package edu.hotproperties.final_project.entities;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import edu.hotproperties.final_project.emuns.Role;
+import edu.hotproperties.final_project.enums.Role;
 
 import jakarta.persistence.*;
 

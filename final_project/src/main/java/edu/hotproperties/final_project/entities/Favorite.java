@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "favorties")
+@Table(name = "favorites")
 public class Favorite {
 
     @Id

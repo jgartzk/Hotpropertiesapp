@@ -1,4 +1,4 @@
-package edu.hotproperties.final_project.emuns;
+package edu.hotproperties.final_project.enums;
 
 public enum Role {
     ADMIN, BUYER, AGENT;

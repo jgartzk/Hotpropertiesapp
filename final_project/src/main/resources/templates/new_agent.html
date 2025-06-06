@@ -6,12 +6,13 @@
     <link rel="stylesheet" th:href="@{/css/login.css}"/>
 </head>
 <body>
+<div class="back-link">
+    <a class="btn" th:href="@{/dashboard}">← Dashboard</a>
+</div>
 <div class="login-container">
     <h1>Create Agent</h1>
 
-    <div class="back-link">
-        <a th:href="@{/dashboard}">← Dashboard</a>
-    </div>
+    <p th:if="${errorMessage!=null and not errorMessage.empty}" th:text="${errorMessage}" style="color:red;"></p>
 
     <form method="post" th:action="@{/admin/create_agent}" th:object="${user}" enctype="multipart/form-data">
 
