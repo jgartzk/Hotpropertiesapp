@@ -296,12 +296,12 @@ public class UserServiceImpl implements UserService {
     public void prepareEditPropertyModel(Long id, Model model, boolean err){
             Property property = propertyRepository.findById(id)
                     .orElseThrow(() -> new PropertyNotFoundException("Property with id {"+id+"} not found"));
-                model.addAttribute("id", id);
-                model.addAttribute("title", property.getTitle());
-                model.addAttribute("price", property.getPrice());
-                model.addAttribute("location", property.getLocation());
-                model.addAttribute("description", property.getDescription());
-                model.addAttribute("size", property.getSize());
+                model.addAttribute("propertyId", id);
+                model.addAttribute("propertyTitle", property.getTitle());
+                model.addAttribute("propertyPrice", property.getPrice());
+                model.addAttribute("propertyLocation", property.getLocation());
+                model.addAttribute("propertyDescription", property.getDescription());
+                model.addAttribute("propertySize", property.getSize());
 
                 if (err) {
                     model.addAttribute("errorMessage", "Could not update property");
@@ -498,5 +498,11 @@ public class UserServiceImpl implements UserService {
         else if(password.trim().equals("")) {
             throw new InvalidUserParameterException("Password is empty");
         }
-   
-}}
+    }
+
+    public Long getUserCount() {
+        return userRepository.count();
+
+    }
+
+}
