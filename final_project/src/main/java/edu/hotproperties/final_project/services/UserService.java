@@ -77,5 +77,7 @@ public interface UserService {
     void deleteListing(Long id);
 
     void prepareFavoritesModel(Model model);
+
+    Long getUserCount();
 }
 

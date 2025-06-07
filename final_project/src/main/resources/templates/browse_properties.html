@@ -14,24 +14,34 @@
         </a>
     </p>
 </div>
-<div class="property-list">
+<div class="property-list" th:each="property : ${properties}">
     <div class="login-container" th:if="${properties==null or properties.empty}">
         <p>There are no properties to view.</p>
     </div>
-    <div class="property-container" th:each="property : ${properties}">
-        <!--<img th:src="${property.images[0]}" alt="Property Image" class="property-img">-->
-        <h3>
-            <a th:href="@{/buyer/properties/view(id=${property.id})}" th:text="${property.title}"></a>
-        </h3>
-
-        <p><b>Price: $</b> <span th:text="${property.price}"></span></p>
-        <p><b>Location: </b> <span th:text="${property.location}"></span></p>
-        <p><b>Sq. Ft: </b> <span th:text="${property.size}"></span></p>
-        <p style="text-align: left; margin-top: 15px;">
-            <a th:href="@{/buyer/properties/view(id=${property.id})}">
-                <button class="button">View details</button>
-            </a>
-        </p>
+    <div class="property-container">
+        <div class="listing-header">
+            <h2><span th:text="${property.title}"></span></h2>
+            <h2 style="color:green;"><b>$</b><span th:text="${property.price}"></span></h2>
+        </div>
+        <div class="listing-header">
+            <h4><b>Location: </b><span th:text="${property.location}"></span></h4>
+            <h4><b>Size: </b><span th:text="${property.size}"></span><b> Sq. Ft.</b></h4>
+        </div>
+        <div class="listing-row">
+            <div class="cover-image">
+                <p>Add image here</p>
+            </div>
+            <div class="listing-details">
+                <p class="listing-description" th:text="${property.description}"></p>
+            </div>
+        </div>
+        <div class="listing-actions">
+            <p style="text-align: left; margin-top: 15px;">
+                <a th:href="@{/buyer/properties/view(id=${property.id})}">
+                    <button class="btn">View details</button>
+                </a>
+            </p>
+        </div>
     </div>
 
 </div>
