@@ -21,36 +21,26 @@
         <a class="btn" th:href="@{/buyer/properties/list}">Browse Properties</a>
     </div>
 
-    <div class="property-container" th:each="property : ${properties}">
+    <div th:each="property : ${properties}">
 
-        <div class="listing-header">
-            <h2><span th:text="${property.title}"></span></h2>
-            <h2 style="color:green;"><b>$</b><span th:text="${property.price}"></span></h2>
-        </div>
-        <div class="listing-header">
-            <h4><b>Location: </b><span th:text="${property.location}"></span></h4>
-            <h4><b>Size: </b><span th:text="${property.size}"></span><b> Sq. Ft.</b></h4>
-        </div>
-        <div class="listing-row">
-            <div class="cover-image">
-                <p>Add image here</p>
+        <div class="property-container">
+            <div>
+                <h4>
+                    <b>
+                        <a th:href="@{/buyer/properties/view(id=${property.id})}" th:text="${property.title}"></a>
+                    </b>
+                </h4>
+                <p><b>Price: $</b> <span th:text="${property.price}"></span></p>
+                <p><b>Location: </b> <span th:text="${property.location}"></span></p>
+                <p><b>Size: </b> <span th:text="${property.size} + ' sq ft'"></span></p>
+
+                <div class="buttons">
+                    <a th:href="@{/buyer/properties/view(id=${property.id})}" class="btn">View Details</a>
+                    <a th:href="@{/buyer/favorites/remove(id=${property.id})}" class="btn-delete">Remove</a>
+                </div>
             </div>
-            <div class="listing-details">
-                <p class="listing-description" th:text="${property.description}"></p>
-            </div>
         </div>
-        <div class="listing-actions">
-            <p style="text-align: left; margin-top: 15px;">
-                <a th:href="@{/buyer/properties/view(id=${property.id})}">
-                    <button class="btn">View details</button>
-                </a>
-            </p>
-            <p style="text-align: left; margin-top: 15px;">
-                <a th:href="@{/buyer/favorites/remove(id=${property.id})}">
-                    <button class="btn-delete">Remove</button>
-                </a>
-            </p>
-        </div>
+        <hr />
     </div>
 </div>
 </body>
