@@ -52,8 +52,8 @@ public class SecurityConfig {
                         /*
                         .requestMatchers("/login", "/login-form","/error").permitAll()
                         .requestMatchers("/register").permitAll()
-                        .requestMatchers("/profile/**", "/dashboard/**").hasAnyRole("AGENT","ADMIN","BUYER")
-                        .requestMatchers("/agent/**").hasRole("AGENT")
+                        .requestMatchers("/profile/**", "/dashboard/**").hasAnyRole("ROLE_AGENT","ADMIN","BUYER")
+                        .requestMatchers("/agent/**").hasRole("ROLE_AGENT")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/buyer/**").hasRole("BUYER")
                         .requestMatchers("/", "/index", "/css/**", "/js/**", "/images/**", "/webjars/**", "/profile").permitAll()

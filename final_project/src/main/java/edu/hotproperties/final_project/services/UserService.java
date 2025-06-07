@@ -32,24 +32,24 @@ public interface UserService {
     @PreAuthorize("isAuthenticated()")
     void prepareEditProfileModel(Model model,boolean err);
 
-    //@PreAuthorize("hasRole('AGENT')")
+    //@PreAuthorize("hasRole('ROLE_AGENT')")
     void createProperty(Property property);
 
-    //@PreAuthorize("hasRole('AGENT')")
+    //@PreAuthorize("hasRole('ROLE_AGENT')")
     void updateProperty(Long id, String title, Double price, String location, String description, int size);
 
-    //@PreAuthorize("hasRole('AGENT')")
+    //@PreAuthorize("hasRole('ROLE_AGENT')")
     void prepareEditPropertyModel(Long id, Model model, boolean err);
 
-    //@PreAuthorize("hasRole('AGENT')")
+    //@PreAuthorize("hasRole('ROLE_AGENT')")
     void prepareManagedListingsModel(Model model);
 
-    //@PreAuthorize("hasRole('AGENT')")
+    //@PreAuthorize("hasRole('ROLE_AGENT')")
     void prepareMessagesModel(Model model);
 
-    //@PreAuthorize("hasRole('AGENT')")
+    //@PreAuthorize("hasRole('ROLE_AGENT')")
     void prepareNewPropertyModel(Model model, boolean err);
-    //@PreAuthorize("hasRole('AGENT')")
+    //@PreAuthorize("hasRole('ROLE_AGENT')")
     void prepareViewMessageModel(Long id, Model model);
 
 //    @PreAuthorize("hasRole('Agent')")

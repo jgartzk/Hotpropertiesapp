@@ -30,8 +30,8 @@
         <input id="password" th:field="*{password}" type="password"/>
         <!-- Show Password Checkbox -->
         <label class="profile-table">
-            <input class="checkbox-margin" onclick="togglePasswordVisibility()" type="checkbox"/>
             Show Password
+            <input class="checkbox-margin" onclick="togglePasswordVisibility()" type="checkbox"/>
         </label>
         <!-- Error Message -->
         <div class="error-message" th:if="${loginError}" th:text="${loginError}"></div>

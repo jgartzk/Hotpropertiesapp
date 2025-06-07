@@ -285,7 +285,7 @@ public class UserServiceImpl implements UserService {
         Message message = messageRepository.findById(id)
                 .orElseThrow(() -> new PropertyNotFoundException("Property with id {"+id+"} not found"));
 
-        if (getCurrentUserContext().user().getRoles().contains(Role.AGENT)) {
+        if (getCurrentUserContext().user().getRoles().contains(Role.ROLE_AGENT)) {
             model.addAttribute("isAgent", true);
         }
         model.addAttribute("message", message);
@@ -325,10 +325,10 @@ public class UserServiceImpl implements UserService {
         //Get current user (Agent)
         User user = getCurrentUserContext().user();
 
-        if (user.getRoles().contains(Role.BUYER)) {
+        if (user.getRoles().contains(Role.ROLE_BUYER)) {
             messages = messageRepository.findAllBySender(user);
         }
-        else if (user.getRoles().contains(Role.AGENT)) {
+        else if (user.getRoles().contains(Role.ROLE_AGENT)) {
               //For all properties managed by agent
               List<Property> properties = propertyRepository.findAllByAgent(user);
               for (Property property : properties) {
@@ -357,7 +357,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public void postNewAgent(User agent) {
-        agent.addRole(Role.AGENT);
+        agent.addRole(Role.ROLE_AGENT);
 
         validUser(agent);//throw error if not valid
         userRepository.save(agent);

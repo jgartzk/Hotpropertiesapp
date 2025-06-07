@@ -25,7 +25,7 @@ public class AdminInitializer {
             admin.setEmail("admin@testing.com");
             admin.setPassword("miniproject");
 
-            userService.registerNewUser(admin, Role.ADMIN);
+            userService.registerNewUser(admin, Role.ROLE_ADMIN);
         }
         catch (Exception e){
             //User already in the db

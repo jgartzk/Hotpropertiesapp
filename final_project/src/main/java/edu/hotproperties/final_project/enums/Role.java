@@ -1,11 +1,11 @@
 package edu.hotproperties.final_project.enums;
 
 public enum Role {
-    ADMIN, BUYER, AGENT;
+    ROLE_ADMIN, ROLE_BUYER, ROLE_AGENT;
 
 
     public String getRole() {
 
-        return "ROLE_" + this.name();
+        return this.name();
     }
 }

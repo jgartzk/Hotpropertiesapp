@@ -72,7 +72,7 @@ public class AuthController {
                                RedirectAttributes redirectAttributes) {
         try {
             // First, register the user (this will assign them an ID)
-            User savedUser = userService.registerNewUser(user, Role.BUYER);
+            User savedUser = userService.registerNewUser(user, Role.ROLE_BUYER);
 
             redirectAttributes.addFlashAttribute("successMessage", "Registration successful.");
             return "redirect:/login";
@@ -115,7 +115,7 @@ public class AuthController {
     }
 
     @GetMapping("/dashboard")
-    @PreAuthorize("hasAnyRole('BUYER', 'AGENT', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('BUYER', 'ROLE_AGENT', 'ADMIN')")
     public String dashboard(Model model) {
         userService.prepareDashboardModel(model);
         return "dashboard";
@@ -188,7 +188,7 @@ public class AuthController {
 
 
 
-    //AGENT FUNCTIONALITY
+    //ROLE_AGENT FUNCTIONALITY
 
     //Create new property -- get form/screen
     @GetMapping("/agent/new_property")
@@ -221,7 +221,7 @@ public class AuthController {
     //Get existing property by id and update it
 
     @PostMapping("/agent/edit_listing")
-    //@PreAuthorize("hasRole('AGENT')")
+    //@PreAuthorize("hasRole('ROLE_AGENT')")
     public String editProperty(@RequestParam(name="id") Long id,
                                @RequestParam(required = true) String title,
                                @RequestParam(required = true) String price,
@@ -241,7 +241,7 @@ public class AuthController {
     }
 
     @GetMapping("/agent/edit_listing")
-    //@PreAuthorize("hasRole('AGENT')")
+    //@PreAuthorize("hasRole('ROLE_AGENT')")
     public String prepareEditPropertyModel(@RequestParam(name="id") Long id,
                                            @RequestParam(required = false) boolean err,
                                            Model model) {
@@ -260,7 +260,7 @@ public class AuthController {
 
     //Agent replies to buyer messages
     @PostMapping("/agent/message/reply")
-    @PreAuthorize("hasRole('AGENT')")
+    @PreAuthorize("hasRole('ROLE_AGENT')")
     public String viewMessage(@RequestParam(name="id") Long id, @RequestBody String reply) {
         //User adds sender info and message to screen
         userService.postMessageReply(id, reply);
@@ -299,7 +299,7 @@ public class AuthController {
     @PostMapping("/admin/create_agent")
     public String createAgent(@ModelAttribute("user") User user) {
         try {
-            userService.registerNewUser(user, Role.AGENT);
+            userService.registerNewUser(user, Role.ROLE_AGENT);
             return "redirect:/admin/users";
         }
         catch (Exception e) {
