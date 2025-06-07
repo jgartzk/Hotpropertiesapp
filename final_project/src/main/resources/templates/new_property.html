@@ -10,11 +10,12 @@
 
     <p style="text-align: left; margin-top: 15px;">
         <a th:href="@{/dashboard}">
-            <button class="button">← Dashboard</button>
+            <button class="btn">← Dashboard</button>
         </a>
     </p>
 
     <div class="login-container">
+        <p th:if="${errorMessage!=null and not errorMessage.empty}" th:text="${errorMessage}" style="color:red;"></p>
         <form th:action="@{/agent/new_property}" th:object="${property}" method="post" enctype="multipart/form-data">
             <label>Title: <input th:field="*{title}"/></label><br>
             <label>Price: <input th:field="*{price}"/></label><br>

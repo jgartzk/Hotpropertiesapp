@@ -44,6 +44,8 @@ form label {
 
 .property-container {
     list-style-type: none;
+    height:fit-content;
+    width:400px;
     text-align: center;
     margin-top: 80px;
     padding: 25px;
@@ -114,7 +116,6 @@ ul.no-bullets {
 }
 
 button {
-    width: 100%;
     padding: 10px;
     background-color: #007BFF;
     color: white;
@@ -152,7 +153,7 @@ button {
     text-decoration:none;
     padding: 10px;
     margin-bottom: 20px;
-    background-color: gray;
+    background-color: lightgray;
     color: white;
     font-weight: bold;
     border: none;
@@ -163,6 +164,11 @@ button {
 .btn-delete:hover {
     background-color:orange;
     color:red;
+}
+
+.btn-cancel:hover {
+    background-color:gray;
+    color:lightgray;
 }
 
 button:hover, .btn:hover {
@@ -228,9 +234,11 @@ tr {
 }
 
 .details-image {
-    width:600px;
-    height:350px;
+    width:590px;
+    height:340px;
+    margin:10px;
     background-color:gray;
+    border-radius:5px;
 }
 
 .details-column {

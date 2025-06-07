@@ -14,10 +14,14 @@
         </a>
     </p>
 
+    <div class="login-container" th:if="${messages==null or messages.empty}">
+        <p>You do not have any messages.</p>
+    </div>
+
     <li th:each="message : ${messages}">
-        <h2 th:text="${message.sender}: {message.property.title}"></h2>
+        <h2 th:text="${message.property.title}"></h2>
         <h4 th:text="${message.timestamp}"></h4>
-        <a th:href="@{/message(id=${message.id})}"></a>
+        <a th:href="@{/message(id=${message.id})}">View Message</a>
     </li>
 </body>
 </html>

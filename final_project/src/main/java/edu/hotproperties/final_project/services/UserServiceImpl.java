@@ -2,7 +2,7 @@ package edu.hotproperties.final_project.services;
 
 import edu.hotproperties.final_project.entities.Favorite;
 
-import edu.hotproperties.final_project.emuns.Role;
+import edu.hotproperties.final_project.enums.Role;
 
 import edu.hotproperties.final_project.entities.Message;
 
@@ -23,8 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
 import java.time.LocalDateTime;
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.Optional;
 
 import java.util.ArrayList;
@@ -61,20 +59,9 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User registerNewUser(User user, List<String> roleNames) {
-        Set<Role> roles = roleNames.stream()
-                .map(roleName -> {
-                    try {
+    public User registerNewUser(User user, Role role) {
 
-                        String role = roleName.toUpperCase().replaceFirst("^ROLE_", "");
-                        return Role.valueOf(role);
-                    } catch (IllegalArgumentException e) {
-                        throw new RuntimeException("Role used is not valid: " + roleName);
-                    }
-                })
-                .collect(Collectors.toSet());
-
-        user.setRoles(roles);
+        user.addRole(role);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreatedAt(LocalDateTime.now());
         userRepository.save(user);
@@ -103,6 +90,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void postEditProfile(String firstName, String lastName, String email)  {
 
+
         //Get current user
         User currentUser = getCurrentUserContext().user();
 
@@ -111,18 +99,23 @@ public class UserServiceImpl implements UserService {
         currentUser.setLastName(lastName);
         currentUser.setEmail(email);
 
+        validUser(currentUser); //Throw error if invalid user
+
         //Save update user details
         userRepository.save(currentUser);
 
     }
 
     @Override
-    public void prepareEditProfileModel(Model model) {
+    public void prepareEditProfileModel(Model model, boolean err) {
         CurrentUserContext context = getCurrentUserContext();
         model.addAttribute("firstName", context.user().getFirstName());
         model.addAttribute("lastName", context.user().getLastName());
         model.addAttribute("email", context.user().getEmail());
         model.addAttribute("user", context.user());
+        if (err) {
+            model.addAttribute("errorMessage", "Could not update profile");
+        }
     }
 
 
@@ -147,32 +140,50 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Property> getFavorites(User user){
-        return favoriteRepository.findAllByUser(user);
-    }
+    public void addFavorite(Long id) {
+        Property property = propertyRepository.findById(id)
+                        .orElseThrow(() -> new PropertyNotFoundException("Property with id {"+id+"} not found"));
 
-    @Override
-    public Favorite removeFavorite(User user, Property property) {
-        if(favoriteExists(user, property))
-            throw new NotFoundException("Favorite doesn't exist: " + property.getTitle());
-        Favorite favorite = favoriteRepository.findByPropertyAndUser(user, property);
-        favoriteRepository.delete(favorite);
-        return favorite;
-    }
+        //create new favorite with property, user, time created
+        Favorite favorite = new Favorite(getCurrentUserContext().user(), property, LocalDateTime.now());
 
-    @Override
-    public Favorite addFavorite(Favorite favorite) {
+        //validate favorite and save
         validFavorite(favorite);
         favoriteRepository.save(favorite);
-        return favorite;
     }
 
     @Override
-    public boolean isFavorite(User user, Property property) {
-        Property favorite = favoriteRepository.findByUserAndProperty(user, property);
-        if(favorite != null)
-            return true;
-        return false;
+    public void removeFavorite(Long id) {
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new PropertyNotFoundException("Property with id {"+id+"} not found"));
+        Favorite favorite = favoriteRepository.findByUserAndProperty(getCurrentUserContext().user(), property);
+        favoriteRepository.deleteById(favorite.getId());
+    }
+
+    @Override
+    public void deleteListing(Long id) {
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new PropertyNotFoundException("Property with id {"+id+"} not found"));
+        propertyRepository.deleteById(property.getId());
+    }
+
+
+
+    @Override
+    public void prepareFavoritesModel(Model model) {
+        //Get all favorited properties by user
+        User user = getCurrentUserContext().user();
+        List<Favorite> favorites = favoriteRepository.findAllByUser(user);
+
+        //Get all properties for favorites
+        List<Property> properties = new ArrayList<>();
+        for (Favorite entry: favorites){
+            properties.add(entry.getProperty());
+        }
+
+        //add favorite properties to model
+        model.addAttribute("properties", properties);
+
     }
 
     @Override
@@ -194,7 +205,9 @@ public class UserServiceImpl implements UserService {
             property.setAgent(getCurrentUserContext().user()); //Set agent to creator of agent
             propertyRepository.save(property);
         }
-        //TODO: else throw InvalidPropertyException
+        else {
+            throw new InvalidPropertyParameterException("Property could not be created");
+        }
     }
 
 
@@ -221,12 +234,20 @@ public class UserServiceImpl implements UserService {
         Property property = propertyRepository.findById(id)
                 .orElseThrow(() -> new PropertyNotFoundException("Property with id {"+id+"} not found"));
 
+        //check if message sent
+        if (messageRepository.existsByProperty(property)) {
+            model.addAttribute("messageSent",true);
+        }
+        //check if favorited
+        User user = getCurrentUserContext().user();
+        if (favoriteRepository.existsByUserAndProperty(user, property)) {
+            model.addAttribute("favorited",true);
+        }
+
         model.addAttribute("property",property);
         model.addAttribute("id", id);
 
         User buyer = getCurrentUserContext().user();
-        //boolean button = isFavorite(buyer, property);
-        //.addAttribute("button",button);
     }
 
     @Override
@@ -246,23 +267,33 @@ public class UserServiceImpl implements UserService {
     public void prepareManagedListingsModel(Model model) {
         User agent = getCurrentUserContext().user();
         List<Property> properties = propertyRepository.findAllByAgent(agent);
+
         model.addAttribute("role",agent.getRoles());
         model.addAttribute("properties", properties);
     }
     @Override
-    public void prepareNewPropertyModel(Model model){
+    public void prepareNewPropertyModel(Model model, boolean err){
+        if (err) {
+            model.addAttribute("errorMessage", "Could not create new property.");
+        }
         model.addAttribute("property", new Property());
     }
 
     @Override
     public void prepareViewMessageModel(Long id, Model model) {
         //Get message by id and return it to model
-        Message message = messageRepository.getById(id);
+        Message message = messageRepository.findById(id)
+                .orElseThrow(() -> new PropertyNotFoundException("Property with id {"+id+"} not found"));
+
+        if (getCurrentUserContext().user().getRoles().contains(Role.AGENT)) {
+            model.addAttribute("isAgent", true);
+        }
         model.addAttribute("message", message);
+
     }
 
     @Override
-    public void prepareEditPropertyModel(Long id, Model model){
+    public void prepareEditPropertyModel(Long id, Model model, boolean err){
             Property property = propertyRepository.findById(id)
                     .orElseThrow(() -> new PropertyNotFoundException("Property with id {"+id+"} not found"));
                 model.addAttribute("id", id);
@@ -271,6 +302,10 @@ public class UserServiceImpl implements UserService {
                 model.addAttribute("location", property.getLocation());
                 model.addAttribute("description", property.getDescription());
                 model.addAttribute("size", property.getSize());
+
+                if (err) {
+                    model.addAttribute("errorMessage", "Could not update property");
+                }
     }
 
     @Override
@@ -283,24 +318,49 @@ public class UserServiceImpl implements UserService {
         messageRepository.save(message);
     }
 
-  
+
   public void prepareMessagesModel(Model model) {
         List<Message> messages = new ArrayList<Message>();
 
         //Get current user (Agent)
-        User currentUser = getCurrentUserContext().user();
+        User user = getCurrentUserContext().user();
 
-        //For all properties managed by agent
-        List<Property> properties = propertyRepository.findAllByAgent(currentUser);
-        for (Property property : properties) {
-            //If message exists at property, add to the model
-            if (messageRepository.existsByProperty(property)) {
-               messages.add(messageRepository.getByProperty(property));
-
-            }
+        if (user.getRoles().contains(Role.BUYER)) {
+            messages = messageRepository.findAllBySender(user);
         }
+        else if (user.getRoles().contains(Role.AGENT)) {
+              //For all properties managed by agent
+              List<Property> properties = propertyRepository.findAllByAgent(user);
+              for (Property property : properties) {
+                  //If message exists at property, add to the model
+                  if (messageRepository.existsByProperty(property)) {
+                      messages.addAll(messageRepository.findAllByProperty(property));
+                  }
+              }
+        }
+
         //Add all messages to model
         model.addAttribute("messages", messages);
+    }
+
+    public void prepareViewUsersModel(Model model) {
+        List<User> users = userRepository.findAll();
+        model.addAttribute("users", users);
+    }
+
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    public void prepareCreateAgentModel(Model model){
+        model.addAttribute("user", new User());
+    }
+
+    public void postNewAgent(User agent) {
+        agent.addRole(Role.AGENT);
+
+        validUser(agent);//throw error if not valid
+        userRepository.save(agent);
     }
 
     //////////////////////////////////////////////////////
@@ -352,12 +412,6 @@ public class UserServiceImpl implements UserService {
         if(!userRepository.existsByEmail(email)){
             throw new UsernameNotFoundException("User not found");
         }
-    }
-
-    public boolean favoriteExists(User user, Property property) {
-        if(favoriteRepository.findByUserAndProperty(user, property) != null)
-            return true;
-        return false;
     }
 
 

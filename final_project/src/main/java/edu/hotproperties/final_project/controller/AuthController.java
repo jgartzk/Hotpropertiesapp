@@ -1,12 +1,11 @@
 package edu.hotproperties.final_project.controller;
 
-import edu.hotproperties.final_project.entities.Message;
+import edu.hotproperties.final_project.enums.Role;
 import edu.hotproperties.final_project.entities.Property;
 import edu.hotproperties.final_project.services.AuthService;
 import edu.hotproperties.final_project.services.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Controller;
@@ -69,12 +68,11 @@ public class AuthController {
 
     @PostMapping("/register")
     public String registerUser(@ModelAttribute("user") User user,
-                               @RequestParam("selectedRoles") List<String> roleNames,
                                @RequestParam(value = "file", required = false) MultipartFile file,
                                RedirectAttributes redirectAttributes) {
         try {
             // First, register the user (this will assign them an ID)
-            User savedUser = userService.registerNewUser(user, roleNames);
+            User savedUser = userService.registerNewUser(user, Role.BUYER);
 
             redirectAttributes.addFlashAttribute("successMessage", "Registration successful.");
             return "redirect:/login";
@@ -94,8 +92,9 @@ public class AuthController {
 
     @GetMapping("/profile/edit")
     @PreAuthorize("isAuthenticated()")
-    public String editProfile(Model model){
-        userService.prepareEditProfileModel(model);
+    public String editProfile(@RequestParam(required = false) boolean err,
+                              Model model){
+        userService.prepareEditProfileModel(model, err);
         return "edit_profile";
     }
 
@@ -106,9 +105,13 @@ public class AuthController {
                               @RequestParam(required = false) String lastName,
                               @RequestParam(required = false) String email
                               ) {
-
-        userService.postEditProfile(firstName, lastName, email);
-        return "redirect:/profile";
+        try {
+            userService.postEditProfile(firstName, lastName, email);
+            return "redirect:/profile";
+        }
+        catch (Exception e){
+            return "redirect:/profile/edit?err=true";
+        }
     }
 
     @GetMapping("/dashboard")
@@ -133,53 +136,86 @@ public class AuthController {
         return "property_details";
     }
 
-    @GetMapping("/buyer/favorites/favorites")
-    @PreAuthorize("hasRole('BUYER')")
+    @GetMapping("/buyer/favorites")
+    //@PreAuthorize("hasRole('BUYER')")
     public String favorites(Model model) {
-        User current = authService.getCurrentUser();
-        List<Property> favorites = userService.getFavorites(current);
-        model.addAttribute("properties", favorites);
+        userService.prepareFavoritesModel(model);
         return "favorites";
     }
 
-    @DeleteMapping("/buyer/favorites/remove")
-    @PreAuthorize("hasRole('BUYER')")
-    public String removeFavorite(@RequestParam Long propertyId) {
-        User current = authService.getCurrentUser();
-        Property property = userService.getPropertyById(propertyId);
-        userService.removeFavorite(current, property);
-        return "redirect:/favorites/favorites";
+    @GetMapping("/buyer/favorites/remove")
+    //@PreAuthorize("hasRole('BUYER')")
+    public String removeFavorite(@RequestParam (required = true) Long id) {
+        userService.removeFavorite(id);
+        return "redirect:/buyer/favorites";
+    }
+
+    @PostMapping("/buyer/favorites/add")
+    //@PreAuthorize("hasRole('BUYER')")
+    public String addFavorite(@RequestParam(required = true) Long id) {
+
+        try {
+            userService.addFavorite(id);
+            return "redirect:/buyer/properties/view?id="+id;
+        }
+        catch (Exception e) {
+            return "redirect:/buyer/properties/view?id="+id;
+        }
     }
 
     @PostMapping("buyer/message")
     //@PreAuthorize("hasRole('BUYER')")
-    public void contactAgent(@RequestParam(required = true) Long id,
+    public String contactAgent(@RequestParam(required = true) Long id,
                                @RequestParam(required = true) String message)
     {
         userService.sendMessage(id, message);
+        return "redirect:/buyer/properties/view?id=" + id;
     }
+
+    @GetMapping("/messages")
+    //@PreAuthorize("hasRole('BUYER')")
+    public String viewBuyerMessages(Model model) {
+        userService.prepareMessagesModel(model);
+        return "messages";
+    }
+
+    @GetMapping("/message")
+    //@PreAuthorize("hasRole('BUYER')")
+    public String viewBuyerMessages(@RequestParam(required=true) Long id, Model model) {
+        userService.prepareViewMessageModel(id, model);
+        return "view_message";
+    }
+
 
 
     //AGENT FUNCTIONALITY
 
     //Create new property -- get form/screen
     @GetMapping("/agent/new_property")
-    public String addPropertyForm(Model model) {
-        userService.prepareNewPropertyModel(model);
+    public String addPropertyForm(@RequestParam(required = false) boolean err,
+                                  Model model) {
+        userService.prepareNewPropertyModel(model, err);
         return "new_property";
     }
 
     //Post new property
     @PostMapping("/agent/new_property")
     public String createProperty(@RequestParam(required = true) String title,
-                                 @RequestParam(required = true) Double price,
+                                 @RequestParam(required = true) String price,
                                  @RequestParam(required = true) String location,
                                  @RequestParam(required = true) String description,
-                                 @RequestParam(required = true) int size
+                                 @RequestParam(required = true) String size
                                 )
     {
-        userService.createProperty(new Property(title, price, location, description, size));
-        return "redirect:/agent/manage_listings";
+        try {
+            double priceDbl = Double.parseDouble(price);
+            int sizeInt = Integer.parseInt(size);
+            userService.createProperty(new Property(title, priceDbl, location, description, sizeInt));
+            return "redirect:/agent/manage_listings";
+        }
+        catch (Exception e) {
+            return "redirect:/agent/new_property?err=true";
+        }
     }
 
     //Get existing property by id and update it
@@ -188,19 +224,29 @@ public class AuthController {
     //@PreAuthorize("hasRole('AGENT')")
     public String editProperty(@RequestParam(name="id") Long id,
                                @RequestParam(required = true) String title,
-                               @RequestParam(required = true) Double price,
+                               @RequestParam(required = true) String price,
                                @RequestParam(required = true) String location,
                                @RequestParam(required = true) String description,
-                               @RequestParam(required = true) int size
+                               @RequestParam(required = true) String size
                                ) {
-        userService.updateProperty(id, title, price, location, description, size); //returns updated property
-        return "redirect:/agent/manage_listings";
+        try {
+            double priceDbl = Double.parseDouble(price);
+            int sizeInt = Integer.parseInt(size);
+            userService.updateProperty(id, title, priceDbl, location, description, sizeInt); //returns updated property
+            return "redirect:/agent/manage_listings";
+        }
+        catch (Exception e){
+            return "redirect:/agent/edit_listing?id="+id+"&err=true";
+        }
     }
 
     @GetMapping("/agent/edit_listing")
     //@PreAuthorize("hasRole('AGENT')")
-    public String prepareEditPropertyModel(@RequestParam(name="id") Long id, Model model) {
-        userService.prepareEditPropertyModel(id, model); //returns updated property
+    public String prepareEditPropertyModel(@RequestParam(name="id") Long id,
+                                           @RequestParam(required = false) boolean err,
+                                           Model model) {
+
+        userService.prepareEditPropertyModel(id, model, err); //returns updated property
         return "edit_listing";
     }
 
@@ -211,35 +257,56 @@ public class AuthController {
         return "manage_listings";
     }
 
-    //Get all messages for Agent
-    @GetMapping("/agent/messages")
-    @PreAuthorize("hasRole('AGENT')")
-    public String getMessages(Model model) {
-        //User service adds Agent's list of messages to the model
-        userService.prepareMessagesModel(model);
-        return "messages";
-    }
 
     //Agent replies to buyer messages
-    @GetMapping("/agent/message")
-    @PreAuthorize("hasRole('AGENT')")
-    public String viewMessage(@RequestParam(name="id") Long id, Model model) {
-        //User adds sender info and message to screen
-        userService.prepareViewMessageModel(id, model);
-        return "view_message";
-    }
-
-    //Get all messages for Agent
-
-
-    //Agent replies to buyer messages
-    @PostMapping("/agent/message")
+    @PostMapping("/agent/message/reply")
     @PreAuthorize("hasRole('AGENT')")
     public String viewMessage(@RequestParam(name="id") Long id, @RequestBody String reply) {
         //User adds sender info and message to screen
         userService.postMessageReply(id, reply);
-        return "view_message";
+        return "redirect:/message?id=" + id;
     }
+
+    //ADMIN FUNCTIONALITY
+    @GetMapping("/admin/users")
+    public String viewUsers(Model model) {
+        userService.prepareViewUsersModel(model);
+        return "user_list";
+    }
+
+    @GetMapping("/admin/users/delete")
+    public String deleteUser(@RequestParam(required = true) Long id) {
+        userService.deleteUser(id);
+        return "redirect:/admin/users";
+    }
+
+    @GetMapping("/agent/delete_listing")
+    public String deleteListing(@RequestParam(required = true) Long id) {
+        userService.deleteListing(id);
+        return "redirect:/agent/manage_listings";
+    }
+
+    @GetMapping("/admin/create_agent")
+    public String createAgent(@RequestParam(required = false) boolean err,
+                              Model model) {
+        model.addAttribute("user", new User());
+        if (err) {
+            model.addAttribute("errorMessage", "Could not create agent.");
+        }
+        return "new_agent";
+    }
+
+    @PostMapping("/admin/create_agent")
+    public String createAgent(@ModelAttribute("user") User user) {
+        try {
+            userService.registerNewUser(user, Role.AGENT);
+            return "redirect:/admin/users";
+        }
+        catch (Exception e) {
+            return "redirect:/admin/create_agent?err=true";
+        }
+    }
+
 }
 
 

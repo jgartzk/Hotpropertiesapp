@@ -2,7 +2,7 @@ package edu.hotproperties.final_project.entities;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import edu.hotproperties.final_project.emuns.Role;
+import edu.hotproperties.final_project.enums.Role;
 
 import jakarta.persistence.*;
 
@@ -70,6 +70,13 @@ public class User {
 
     public Set<Role> getRoles() {
         return roles;
+    }
+
+    public void addRole(Role role) {
+        if (this.roles == null) {
+            setRoles(new HashSet<Role>());
+        }
+        this.roles.add(role);
     }
 
     public void setRoles(Set<Role> roles) {

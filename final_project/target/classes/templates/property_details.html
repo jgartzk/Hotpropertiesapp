@@ -9,7 +9,7 @@
 <div>
     <p style="text-align: left; margin-top: 15px;">
         <a th:href="@{/buyer/properties/list}">
-            <button class="button">← Browse Properties</button>
+            <button class="btn">← Browse Properties</button>
         </a>
     </p>
 </div>
@@ -30,13 +30,26 @@
     </div>
 
     <div class="details-contact">
+        <h3><b>Favorite this property?</b></h3>
+        <p th:if="${favorited}" style="color:green;">You have favorited this property.</p>
+        <a th:if="${favorited}" class="btn" th:href="@{/buyer/favorites}">View Favorites</a>
+
+        <form th:unless="${favorited}" th:action="@{/buyer/favorites/add(id=${id})}" method="post">
+            <button class="btn" th:value="${id}">Add to Favorites</button>
+        </form>
+    </div>
+
+    <div class="details-contact">
         <h3><b>Contact Agent</b></h3>
 
-        <form th:action="@{/buyer/message(id=${id})}" method="post">
+        <div th:if="${messageSent}">
+            <p style="color:green;">Message sent to agent.</p>
+            <a class="btn" th:href="@{/messages}">View Messages</a>
+        </div>
+        <form th:unless="${messageSent}" th:action="@{/buyer/message(id=${id})}" method="post">
             <label>Message: <input name="message"/></label><br>
             <button type="submit" class="btn">Send</button>
         </form>
-
     </div>
 
 </div>
