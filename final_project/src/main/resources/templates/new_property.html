@@ -6,24 +6,24 @@
     <link rel="stylesheet" th:href="@{/css/login.css}"/>
 </head>
 <body>
-    <h1>Add New Property</h1>
+<h1>Add New Property</h1>
 
-    <p style="text-align: left; margin-top: 15px;">
-        <a th:href="@{/dashboard}">
-            <button class="btn">← Dashboard</button>
-        </a>
-    </p>
+<p style="text-align: left; margin-top: 15px;">
+    <a th:href="@{/dashboard}">
+        <button class="btn">← Dashboard</button>
+    </a>
+</p>
 
-    <div class="login-container">
-        <p th:if="${errorMessage!=null and not errorMessage.empty}" th:text="${errorMessage}" style="color:red;"></p>
-        <form th:action="@{/agent/new_property}" th:object="${property}" method="post" enctype="multipart/form-data">
-            <label>Title: <input th:field="*{title}"/></label><br>
-            <label>Price: <input th:field="*{price}"/></label><br>
-            <label>Description: <textarea th:field="*{description}"></textarea></label><br>
-            <label>Location: <input th:field="*{location}"/></label><br>
-            <label>Size: <input th:field="*{size}"/></label><br>
-            <button type="submit" class="btn">Add Property</button>
-        </form>
-    </div>
+<div class="login-container">
+    <p th:if="${errorMessage!=null and not errorMessage.empty}" th:text="${errorMessage}" style="color:red;"></p>
+    <form th:action="@{/agent/new_property}" th:object="${property}" method="post" enctype="multipart/form-data">
+        <label>Title: <input th:field="*{title}"/></label><br>
+        <label>Price: <input th:field="*{price}"/></label><br>
+        <label>Location: <input th:field="*{location}"/></label><br>
+        <label>Description: <input th:field="*{description}"/></label><br>
+        <label>Size: <input th:field="*{size}"/></label><br>
+        <button type="submit" class="btn">Add Property</button>
+    </form>
+</div>
 </body>
 </html>

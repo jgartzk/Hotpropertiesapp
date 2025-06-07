@@ -14,30 +14,30 @@
         <span th:if="${#authorization.expression('hasRole(''AGENT'')')}" th:text="'Agent'">Agent</span>
         <span th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:text="'Admin'">Admin</span>
     </p>
-        <p class="profile-table">Welcome to your dashboard.</p>
+    <p class="profile-table">Welcome to your dashboard.</p>
 
 
-        <div th:if="${#authorization.expression('hasRole(''BUYER'')')}">
-            <a class="dashboard-section" th:href="@{/profile}">My Profile</a>
-            <a class="dashboard-section" th:href="@{/buyer/properties/list}">Browse Properties</a>
-            <a class="dashboard-section" th:href="@{/buyer/favorites}">Saved Favorites</a>
-            <a class="dashboard-section" th:href="@{/messages}">View Messages</a>
-        </div>
+    <div th:if="${#authorization.expression('hasRole(''BUYER'')')}">
+        <a class="dashboard-section" th:href="@{/profile}">My Profile</a>
+        <a class="dashboard-section" th:href="@{/buyer/properties/list}">Browse Properties</a>
+        <a class="dashboard-section" th:href="@{/buyer/favorites}">Saved Favorites</a>
+        <a class="dashboard-section" th:href="@{/messages}">View Messages</a>
+    </div>
 
-        <div th:if="${#authorization.expression('hasRole(''AGENT'')')}">
-            <a class="dashboard-section" th:href="@{/profile}">My Profile</a>
-            <a class="dashboard-section" th:href="@{/agent/manage_listings}">Manage Listings</a>
-            <a class="dashboard-section" th:href="@{/agent/new_property}">Add New Property</a>
-            <a class="dashboard-section" th:href="@{/messages}">View Messages</a>
-        </div>
+    <div th:if="${#authorization.expression('hasRole(''AGENT'')')}">
+        <a class="dashboard-section" th:href="@{/profile}">My Profile</a>
+        <a class="dashboard-section" th:href="@{/agent/manage_listings}">Manage Listings</a>
+        <a class="dashboard-section" th:href="@{/agent/new_property}">Add New Property</a>
+        <a class="dashboard-section" th:href="@{/messages}">View Messages</a>
+    </div>
 
-        <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-            <a class="dashboard-section" th:href="@{/profile}">My Profile</a>
-            <a class="dashboard-section" th:href="@{/admin/users}">Manage Users</a>
-            <a class="dashboard-section" th:href="@{/admin/create_agent}">Create Agent</a>
-        </div>
+    <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+        <a class="dashboard-section" th:href="@{/profile}">My Profile</a>
+        <a class="dashboard-section" th:href="@{/admin/users}">Manage Users</a>
+        <a class="dashboard-section" th:href="@{/admin/create_agent}">Create Agent</a>
+    </div>
 
-        <a class="btn-cancel" th:href="@{/logout}">Log Out</a>
+    <a class="btn-cancel" th:href="@{/logout}">Log Out</a>
 </div>
 </body>
 </html>

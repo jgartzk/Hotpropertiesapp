@@ -29,7 +29,7 @@ public class PropertiesDataInitializer {
             admin.setEmail("admin@testing.com");
             admin.setPassword("miniproject");
 
-            userService.registerNewUser(admin, Role.ADMIN);
+            userService.registerNewUser(admin, Role.ROLE_ADMIN);
 
             User agent = new User();
             agent.setFirstName("AGENT");
@@ -37,7 +37,7 @@ public class PropertiesDataInitializer {
             agent.setEmail("agent@testing.com");
             agent.setPassword("miniproject");
 
-            userService.registerNewUser(agent, Role.AGENT);
+            userService.registerNewUser(agent, Role.ROLE_AGENT);
 
             if (propertyRepository.count() > 0) {
                 System.out.println("Skipping auto data initialization — records already exist.");

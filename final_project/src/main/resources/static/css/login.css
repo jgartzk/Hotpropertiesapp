@@ -15,7 +15,7 @@ body p, body a {
     font-size:14px;
 }
 
-form label, textarea label {
+form label {
     display: block;
     margin-bottom: 6px;
     font-weight: bold;
@@ -30,19 +30,7 @@ form label, textarea label {
     align-items: center;
     text-align: center;
     width: 500px;
-    padding: 25px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-.message-container {
-    display:flex;
-    flex-direction:column;
-    justify-content: flex-start;
-    align-items: center;
-    text-align: center;
-    width: 800px;
+    margin-top: 80px;
     padding: 25px;
     background-color: white;
     border-radius: 8px;
@@ -74,8 +62,6 @@ form label, textarea label {
 }
 
 .property-container {
-    min-width:800px;
-    margin-bottom:20px;
     list-style-type: none;
     height:fit-content;
     width:400px;
@@ -84,24 +70,6 @@ form label, textarea label {
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-.listing-row {
-    display:flex;
-    gap:10px;
-}
-
-.listing-actions {
-    display:flex;
-    margin-top:10px;
-    gap:10px;
-}
-
-.cover-image {
-    width:50%;
-    height:225px;
-    border-radius:8px;
-    background-color:gray;
 }
 
 .roles-list {
@@ -140,25 +108,14 @@ label {
     margin-bottom: 14px;
     text-align: center;
 }
-
 .failure {
     color: red;
     font-size: 0.95em;
     margin-bottom: 14px;
     text-align: center;
 }
-
 input {
-    width: 500px;
-    padding: 8px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-textarea {
-    height:200px;
-    width:500px;
+    width: 100%;
     padding: 8px;
     margin-bottom: 15px;
     border: 1px solid #ccc;
@@ -277,7 +234,7 @@ tr {
 
 .centered-link { text-align: center; margin-top: 20px; }
 .checkbox-margin { margin-right: 6px; }
-.profile-table { width: 100%; margin-top: 20px; border-collapse: collapse; font-size:16px;}
+.profile-table { width: 100%; margin-top: 20px; border-collapse: collapse; font-size:20px;}
 .section-spacing { margin-top: 20px; }
 
 .property-list{
@@ -293,48 +250,35 @@ tr {
 }
 
 .details-card {
-    width: 1000px;
-    height: 800px;
+    width: 800px;
+    height: 600px;
     background: white;
     border-radius: 10px;
     display: flex;
-    flex-direction:row;
+    flex-direction:column;
 }
 
 .details-image {
-    width:500px;
-    height:300px;
+    width:590px;
+    height:340px;
     margin:10px;
     background-color:gray;
     border-radius:5px;
 }
 
 .details-column {
-    width:500px;
-    height:800px;
+    width:200px;
+    height:350px;
     display:flex;
     flex-direction:column;
-    margin-right:10px;
-    overflow:hidden;
-    overflow-y:scroll;
-    scrollbar-width:thin;
-}
-
-.details-header {
-    display:flex;
-    gap:20px;
-    width:400px;
-    justify-content:center;
-    align-items:baseline;
 }
 
 .details-contact {
-    display:block;
-    margin-left:10px;
+    display:flex;
+    flex-direction:column;
 }
 
 .remove-button {
-    font-size:20px;
     width: 100%;
     padding: 10px;
     background-color: #FF0000;
@@ -344,34 +288,6 @@ tr {
     border-radius: 4px;
     cursor: pointer;
 }
-.listing-title {
-    margin:0px;
-}
-
-.listing-header {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    align-items: baseline;
-}
-
-.listing-details {
-    display:flex;
-    flex-direction:column;
-    width:50%;
-}
-
-.listing-description {
-     display: block;/* or inline-block */
-     overflow:hidden;
-     overflow-y:scroll;
-     scrollbar-width:thin;
-     height: 210px;
-     text-align:left;
-     line-height:1.8em;
-     margin:0px;
-   }
 
 .add-button {
     width: 100%;
