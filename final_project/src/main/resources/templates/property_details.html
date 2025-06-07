@@ -13,45 +13,46 @@
         </a>
     </p>
 </div>
-<h1 th:text="${property.title}"></h1>
-<div class="details-card">
-    <div style="display:flex;flex-direction:row;">
-        <div class="details-image">
-            <p>Image list goes here</p>
+    <h1 th:text="${property.title}"></h1>
+    <div class="details-header">
+        <b>Price: </b><p th:text="${property.price}"></p>
+        <b>Location: </b><p th:text="${property.location}"></p>
+        <b>Size: </b><p th:text="${property.size}"></p>
+    </div>
+    <div class="details-card">
+        <div style="display:flex;flex-direction:column;">
+            <div class="details-image">
+                <p>Image list goes here</p>
+            </div>
+
+            <div class="details-contact">
+                <h3><b>Favorite this property?</b></h3>
+                <p th:if="${favorited}" style="color:green;">You have favorited this property.</p>
+                <a th:if="${favorited}" class="btn" th:href="@{/buyer/favorites}">View Favorites</a>
+
+                <form th:unless="${favorited}" th:action="@{/buyer/favorites/add(id=${id})}" method="post">
+                    <button class="btn" th:value="${id}">Add to Favorites</button>
+                </form>
+            </div>
+
+            <div class="details-contact">
+                <h3><b>Contact Agent</b></h3>
+
+                <div th:if="${messageSent}">
+                    <p style="color:green;">Message sent to agent.</p>
+                    <a class="btn" th:href="@{/messages}">View Messages</a>
+                </div>
+                <form th:unless="${messageSent}" th:action="@{/buyer/message(id=${id})}" method="post">
+                    <label>Message: <input style="width:400px;" name="message"/></label><br>
+                    <button type="submit" class="btn">Send</button>
+                </form>
+            </div>
         </div>
 
         <div class="details-column">
-            <p th:text= "'Price:        $' + ${property.price}"></p>
-            <p th:text= "'Location:     ' + ${property.location}"></p>
-            <p th:text= "'Size:         ' + ${property.size}"></p>
             <p><b>Description</b></p>
             <p th:text="${property.description}"></p>
         </div>
     </div>
-
-    <div class="details-contact">
-        <h3><b>Favorite this property?</b></h3>
-        <p th:if="${favorited}" style="color:green;">You have favorited this property.</p>
-        <a th:if="${favorited}" class="btn" th:href="@{/buyer/favorites}">View Favorites</a>
-
-        <form th:unless="${favorited}" th:action="@{/buyer/favorites/add(id=${id})}" method="post">
-            <button class="btn" th:value="${id}">Add to Favorites</button>
-        </form>
-    </div>
-
-    <div class="details-contact">
-        <h3><b>Contact Agent</b></h3>
-
-        <div th:if="${messageSent}">
-            <p style="color:green;">Message sent to agent.</p>
-            <a class="btn" th:href="@{/messages}">View Messages</a>
-        </div>
-        <form th:unless="${messageSent}" th:action="@{/buyer/message(id=${id})}" method="post">
-            <label>Message: <input name="message"/></label><br>
-            <button type="submit" class="btn">Send</button>
-        </form>
-    </div>
-
-</div>
 </body>
 </html>
