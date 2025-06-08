@@ -19,8 +19,8 @@
     <form th:action="@{/agent/edit_listing(id=${id})}" method="post">
         <label>Title: <input name="title" th:value="${title}"/></label><br>
         <label>Price: <input name="price" th:value="${price}"/></label><br>
-        <label>Description: <input name="description" th:value="${description}"/></label><br>
         <label>Location: <input name="location" th:value="${location}"/></label><br>
+        <label>Description: <input name="description" th:value="${description}"/></label><br>
         <label>Size: <input name="size" th:value="${size}"/></label><br>
         <button class="btn" type="submit">Update Listing</button>
     </form>
