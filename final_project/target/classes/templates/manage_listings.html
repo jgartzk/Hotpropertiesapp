@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}"/>
+</head>
+<body>
+<h1>Managed Properties</h1>
+
+<p style="text-align: left; margin-top: 15px;">
+    <a th:href="@{/dashboard}">
+        <button class="btn">← Dashboard</button>
+    </a>
+</p>
+
+<div class="login-container" th:if="${properties==null or properties.empty}">
+    <p>You do not have any managed listings.</p>
+    <br>
+    <a class="btn" th:href="@{/agent/new_property}">Create Listing</a>
+</div>
+
+<ul class="no-bullets" th:each="property : ${properties}">
+    <div class="property-container">
+        <div>
+            <h2 th:text="${property.title}"></h2>
+            <h2 th:text="${property.price}"></h2>
+        </div>
+        <div>
+            <h4 th:text="${property.location}"></h4>
+            <h4 th:text="${property.size}"></h4>
+            <p th:text="${property.description}"></p>
+            <a class="btn" th:href="@{/agent/edit_listing(id=${property.id})}">Manage Property</a>
+            <a class="btn-delete" th:href="@{/agent/delete_listing(id=${property.id})}">Delete</a>
+        </div>
+    </div>
+</ul>
+</body>
+</html>

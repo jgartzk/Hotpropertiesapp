@@ -67,6 +67,8 @@ form label {
     width:400px;
     text-align: center;
     padding: 25px;
+    margin-bottom: 40px;
+    margin-top: 40px;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
@@ -201,14 +203,14 @@ button:hover, .btn:hover, .dashboard-section:hover {
 }
 
 ul li {
-  margin-bottom: 10px;
+    margin-bottom: 10px;
 }
 
 table {
     border-spacing: 0 12px; /* vertical spacing between rows */
 
-        border-collapse: collapse; /* ✅ ensures borders align */
-        width: 100%;
+    border-collapse: collapse; /* ✅ ensures borders align */
+    width: 100%;
 }
 
 th, td {

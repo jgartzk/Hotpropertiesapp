@@ -25,12 +25,14 @@
 
         <div class="property-container">
             <div>
+                <img th:src="@{'/propertyimages/' + ${property.title} + '/' + ${property.images[0].getImageFilename()}}"
+                     alt="Property Image" class="img-fluid" style="width: 300px; height: 200px; object-fit: cover;">
                 <h4>
                     <b>
                         <a th:href="@{/buyer/properties/view(id=${property.id})}" th:text="${property.title}"></a>
                     </b>
                 </h4>
-                <p><b>Price: $</b> <span th:text="${property.price}"></span></p>
+                <p><b>Price: </b> <span th:text="${#numbers.formatCurrency(property.price)}"></span></p>
                 <p><b>Location: </b> <span th:text="${property.location}"></span></p>
                 <p><b>Size: </b> <span th:text="${property.size} + ' sq ft'"></span></p>
 
