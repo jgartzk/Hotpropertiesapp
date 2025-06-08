@@ -19,8 +19,8 @@
     <form th:action="@{/agent/new_property}" th:object="${property}" method="post" enctype="multipart/form-data">
         <label>Title: <input th:field="*{title}"/></label><br>
         <label>Price: <input th:field="*{price}"/></label><br>
-        <label>Description: <input th:field="*{description}"/></label><br>
         <label>Location: <input th:field="*{location}"/></label><br>
+        <label>Description: <input th:field="*{description}"/></label><br>
         <label>Size: <input th:field="*{size}"/></label><br>
         <button type="submit" class="btn">Add Property</button>
     </form>

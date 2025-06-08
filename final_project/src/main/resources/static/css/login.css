@@ -253,24 +253,21 @@ tr {
 
 .details-card {
     width: 800px;
-    height: 600px;
     background: white;
     border-radius: 10px;
     display: flex;
     flex-direction:column;
+    padding: 20px;
 }
 
 .details-image {
     width:590px;
-    height:340px;
     margin:10px;
-    background-color:gray;
     border-radius:5px;
 }
 
 .details-column {
     width:200px;
-    height:350px;
     display:flex;
     flex-direction:column;
 }
