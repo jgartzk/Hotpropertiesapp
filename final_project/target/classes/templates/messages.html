@@ -6,22 +6,22 @@
     <link rel="stylesheet" th:href="@{/css/login.css}"/>
 </head>
 <body>
-    <h1>Messages</h1>
+<h1>Messages</h1>
 
-    <p style="text-align: left; margin-top: 15px;">
-        <a th:href="@{/dashboard}">
-            <button class="btn">← Dashboard</button>
-        </a>
-    </p>
+<p style="text-align: left; margin-top: 15px;">
+    <a th:href="@{/dashboard}">
+        <button class="btn">← Dashboard</button>
+    </a>
+</p>
 
-    <div class="login-container" th:if="${messages==null or messages.empty}">
-        <p>You do not have any messages.</p>
-    </div>
+<div class="login-container" th:if="${messages==null or messages.empty}">
+    <p>You do not have any messages.</p>
+</div>
 
-    <div class="message-container" th:each="message : ${messages}">
-        <h2 th:text="${message.property.title}"></h2>
-        <h4 th:text="${message.timestamp}"></h4>
-        <a class="btn" th:href="@{/message(id=${message.id})}">View Message</a>
-    </div>
+<li th:each="message : ${messages}">
+    <h2 th:text="${message.property.title}"></h2>
+    <h4 th:text="${message.timestamp}"></h4>
+    <a th:href="@{/message(id=${message.id})}">View Message</a>
+</li>
 </body>
 </html>
