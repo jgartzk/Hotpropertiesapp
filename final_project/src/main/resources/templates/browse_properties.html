@@ -14,17 +14,18 @@
         </a>
     </p>
 </div>
-<div class="property-list">
+<div class="favorites-container">
     <div class="login-container" th:if="${properties==null or properties.empty}">
         <p>There are no properties to view.</p>
     </div>
     <div class="property-container" th:each="property : ${properties}">
-        <!--<img th:src="${property.images[0]}" alt="Property Image" class="property-img">-->
+        <img th:src="@{'/propertyimages/' + ${property.title} + '/' + ${property.images[0].getImageFilename()}}"
+             alt="Property Image" class="img-fluid" style="width: 300px; height: 200px; object-fit: cover;">
         <h3>
             <a th:href="@{/buyer/properties/view(id=${property.id})}" th:text="${property.title}"></a>
         </h3>
 
-        <p><b>Price: $</b> <span th:text="${property.price}"></span></p>
+        <p><b>Price: </b> <span th:text="${#numbers.formatCurrency(property.price)}"></span></p>
         <p><b>Location: </b> <span th:text="${property.location}"></span></p>
         <p><b>Sq. Ft: </b> <span th:text="${property.size}"></span></p>
         <p style="text-align: left; margin-top: 15px;">
@@ -33,7 +34,7 @@
             </a>
         </p>
     </div>
-
+    <hr />
 </div>
 </body>
 </html>

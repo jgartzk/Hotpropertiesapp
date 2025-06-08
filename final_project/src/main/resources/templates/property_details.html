@@ -17,11 +17,14 @@
 <div class="details-card">
     <div style="display:flex;flex-direction:row;">
         <div class="details-image">
-            <p>Image list goes here</p>
+            <div th:each="image : ${property.images}">
+                <img th:src="@{'/propertyimages/' + ${property.title} + '/' + ${image.imageFilename}}"
+                     alt="Property Image" class="img-fluid" style="width: 450px; height: 300px; object-fit: cover; margin-top: 15px;">
+            </div>
         </div>
 
         <div class="details-column">
-            <p th:text= "'Price:        $' + ${property.price}"></p>
+            <p th:text= "'Price:        ' + ${#numbers.formatCurrency(property.price)}"></p>
             <p th:text= "'Location:     ' + ${property.location}"></p>
             <p th:text= "'Size:         ' + ${property.size}"></p>
             <p><b>Description</b></p>
