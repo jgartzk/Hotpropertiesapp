@@ -32,24 +32,25 @@ public interface UserService {
     @PreAuthorize("isAuthenticated()")
     void prepareEditProfileModel(Model model,boolean err);
 
-    //@PreAuthorize("hasRole('ROLE_AGENT')")
+    @PreAuthorize("hasRole('AGENT')")
     void createProperty(Property property);
 
-    //@PreAuthorize("hasRole('ROLE_AGENT')")
+    @PreAuthorize("hasRole('AGENT')")
     void updateProperty(Long id, String title, Double price, String location, String description, int size);
 
-    //@PreAuthorize("hasRole('ROLE_AGENT')")
+    @PreAuthorize("hasRole('AGENT')")
     void prepareEditPropertyModel(Long id, Model model, boolean err);
 
-    //@PreAuthorize("hasRole('ROLE_AGENT')")
+    @PreAuthorize("hasRole('AGENT')")
     void prepareManagedListingsModel(Model model);
 
-    //@PreAuthorize("hasRole('ROLE_AGENT')")
+    @PreAuthorize("hasRole('AGENT')")
     void prepareMessagesModel(Model model);
 
-    //@PreAuthorize("hasRole('ROLE_AGENT')")
+    @PreAuthorize("hasRole('AGENT')")
     void prepareNewPropertyModel(Model model, boolean err);
-    //@PreAuthorize("hasRole('ROLE_AGENT')")
+
+    @PreAuthorize("hasRole('AGENT')")
     void prepareViewMessageModel(Long id, Model model);
 
 //    @PreAuthorize("hasRole('Agent')")
@@ -59,23 +60,28 @@ public interface UserService {
 
     void sendMessage(Long id, String message);
 
-    //@PreAuthorize("hasRole('BUYER')")
+    @PreAuthorize("hasRole('BUYER')")
     void removeFavorite(Long id);
 
-    //@PreAuthorize("hasRole('BUYER')")
+    @PreAuthorize("hasRole('BUYER')")
     void addFavorite(Long id);
 
     Property getPropertyById(Long id);
 
     void postMessageReply(Long id, String reply);
 
+    @PreAuthorize("hasRole('ADMIN')")
     void prepareViewUsersModel(Model model);
+
+    @PreAuthorize("hasRole('ADMIN')")
     void deleteUser(Long id);
 
     void prepareCreateAgentModel(Model model);
 
+    @PreAuthorize("hasRole('AGENT')")
     void deleteListing(Long id);
 
+    @PreAuthorize("hasRole('BUYER')")
     void prepareFavoritesModel(Model model);
 
     Long getUserCount();
