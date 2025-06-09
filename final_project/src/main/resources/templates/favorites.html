@@ -6,6 +6,7 @@
     <link rel="stylesheet" th:href="@{/css/login.css}"/>
 </head>
 <body>
+<h1>Favorite Properties</h1>
 <div>
     <p style="text-align: left; margin-top: 15px;">
         <a th:href="@{/dashboard}">
@@ -13,40 +14,34 @@
         </a>
     </p>
 </div>
-<div class="favorites-container">
-    <h1>Favorited Properties</h1>
-
-    <div th:unless="${properties}" class="login-container" th:if="${messages==null or messages.empty}">
-        <p>You do not have any favorited properties.</p>
-        <a class="btn" th:href="@{/buyer/properties/list}">Browse Properties</a>
-    </div>
-
-    <div class="property-container" th:each="property : ${properties}">
-
+<div class="login-container" th:if="${favorites==null or favorites.empty}">
+    <p>You have not favorited any properties.</p>
+</div>
+<div class="property-list" th:each="favorite : ${favorites}">
+    <div class="property-container">
         <div class="listing-header">
-            <h2><span th:text="${property.title}"></span></h2>
-            <h2 style="color:green;"><b>$</b><span th:text="${property.price}"></span></h2>
+            <h2><span th:text="${favorite.property.title}"></span></h2>
+            <h2 style="color:green;"><span th:text="${#numbers.formatCurrency(favorite.property.price)}"></span></h2>
         </div>
         <div class="listing-header">
-            <h4><b>Location: </b><span th:text="${property.location}"></span></h4>
-            <h4><b>Size: </b><span th:text="${property.size}"></span><b> Sq. Ft.</b></h4>
+            <h4><b>Location: </b><span th:text="${favorite.property.location}"></span></h4>
+            <h4><b>Size: </b><span th:text="${favorite.property.size}"></span><b> Sq. Ft.</b></h4>
         </div>
         <div class="listing-row">
-            <div class="cover-image">
-                <p>Add image here</p>
-            </div>
+
+            <img th:unless="${favorite.property.images.empty}" th:src="@{'/propertyimages/' + ${favorite.property.title} + '/' + ${favorite.property.images[0].getImageFilename()}}" alt="Property Image" class="cover-image"/>
+            <img th:if="${favorite.property.images.empty}" th:src="@{'/propertyimages/default.jpg'}" alt="Property Image" class="cover-image"/>
+
             <div class="listing-details">
-                <p class="listing-description" th:text="${property.description}"></p>
+                <p class="listing-description" th:text="${favorite.property.description}"></p>
             </div>
         </div>
         <div class="listing-actions">
             <p style="text-align: left; margin-top: 15px;">
-                <a th:href="@{/buyer/properties/view(id=${property.id})}">
+                <a th:href="@{/buyer/properties/view(id=${favorite.property.id})}">
                     <button class="btn">View details</button>
                 </a>
-            </p>
-            <p style="text-align: left; margin-top: 15px;">
-                <a th:href="@{/buyer/favorites/remove(id=${property.id})}">
+                <a th:href="@{/buyer/favorites/remove(id=${favorite.property.id})}">
                     <button class="btn-delete">Remove</button>
                 </a>
             </p>
@@ -55,3 +50,4 @@
 </div>
 </body>
 </html>
+

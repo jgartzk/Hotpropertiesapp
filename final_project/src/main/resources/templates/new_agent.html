@@ -9,7 +9,7 @@
 <div class="back-link">
     <a class="btn" th:href="@{/dashboard}">← Dashboard</a>
 </div>
-<div class="login-container">
+<div class="login-container" style="margin-top:80px;">
     <h1>Create Agent</h1>
 
     <p th:if="${errorMessage!=null and not errorMessage.empty}" th:text="${errorMessage}" style="color:red;"></p>

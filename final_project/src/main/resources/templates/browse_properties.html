@@ -21,16 +21,17 @@
     <div class="property-container">
         <div class="listing-header">
             <h2><span th:text="${property.title}"></span></h2>
-            <h2 style="color:green;"><b>$</b><span th:text="${property.price}"></span></h2>
+            <h2 style="color:green;"><span th:text="${#numbers.formatCurrency(property.price)}"></span></h2>
         </div>
         <div class="listing-header">
             <h4><b>Location: </b><span th:text="${property.location}"></span></h4>
             <h4><b>Size: </b><span th:text="${property.size}"></span><b> Sq. Ft.</b></h4>
         </div>
         <div class="listing-row">
-            <div class="cover-image">
-                <p>Add image here</p>
-            </div>
+
+            <img th:unless="${property.images.empty}" th:src="@{'/propertyimages/' + ${property.title} + '/' + ${property.images[0].getImageFilename()}}" alt="Property Image" class="cover-image"/>
+            <img th:if="${property.images.empty}" th:src="@{'/propertyimages/default.jpg'}" alt="Property Image" class="cover-image"/>
+
             <div class="listing-details">
                 <p class="listing-description" th:text="${property.description}"></p>
             </div>
@@ -43,7 +44,6 @@
             </p>
         </div>
     </div>
-
 </div>
 </body>
 </html>

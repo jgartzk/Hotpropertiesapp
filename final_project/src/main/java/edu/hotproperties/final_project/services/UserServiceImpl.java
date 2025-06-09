@@ -15,6 +15,7 @@ import edu.hotproperties.final_project.repository.PropertyRepository;
 import edu.hotproperties.final_project.repository.UserRepository;
 import edu.hotproperties.final_project.utils.CurrentUserContext;
 import jakarta.el.PropertyNotFoundException;
+import jakarta.servlet.http.Cookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -103,7 +104,6 @@ public class UserServiceImpl implements UserService {
 
         //Save update user details
         userRepository.save(currentUser);
-
     }
 
     @Override
@@ -118,7 +118,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
     @Override
     public void prepareDashboardModel(Model model) {
         CurrentUserContext context = getCurrentUserContext();
@@ -126,18 +125,6 @@ public class UserServiceImpl implements UserService {
         model.addAttribute("authorization", context.auth());
     }
 
-    @Override
-    public List<Property> getProperties() {
-        return propertyRepository.findAllByOrderByPriceDesc();
-    }
-
-    //Maybe get by property id instead?
-    @Override
-    public Property getProperty(String title) {
-        Property property = propertyRepository.findByTitle(title);
-        //TODO: if not found throw PropertyNotFound Exception
-        return property;
-    }
 
     @Override
     public void addFavorite(Long id) {
@@ -175,44 +162,23 @@ public class UserServiceImpl implements UserService {
         User user = getCurrentUserContext().user();
         List<Favorite> favorites = favoriteRepository.findAllByUser(user);
 
-        //Get all properties for favorites
-        List<Property> properties = new ArrayList<>();
-        for (Favorite entry: favorites){
-            properties.add(entry.getProperty());
-        }
-
         //add favorite properties to model
-        model.addAttribute("properties", properties);
+        model.addAttribute("favorites", favorites);
 
-    }
-
-    @Override
-    public Property getPropertyById(Long propertyId) {
-        Optional<Property> property = propertyRepository.findById(propertyId);
-        return property.orElseThrow(() -> new NotFoundException("Property not found: " + propertyId));
     }
 
     @Override
     public void createProperty(Property property) {
-        //Validate property, int must be positive and string must not be empty
-        if (property.getPrice() > 0 &&
-            property.getSize() > 0 &&
-            !property.getTitle().isEmpty() &&
-            !property.getLocation().isEmpty() &&
-            !property.getDescription().isEmpty()
-        ) {
 
-            property.setAgent(getCurrentUserContext().user()); //Set agent to creator of agent
-            propertyRepository.save(property);
-        }
-        else {
-            throw new InvalidPropertyParameterException("Property could not be created");
-        }
+        property.setAgent(getCurrentUserContext().user()); //Set agent to creator of agent
+        //Validate property, int must be positive and string must not be empty
+        validProperty(property);
+        propertyRepository.save(property);
     }
 
 
     @Override
-    public void updateProperty(Long id, String title, Double price, String location, String description, int size) {
+    public void updateProperty(Long id, String title, Double price, String description, String location, int size) {
         //Get existing property from db
         Property property = propertyRepository.findById(id)
                 .orElseThrow(() -> new PropertyNotFoundException("Property with id {"+id+"} not found"));
@@ -220,8 +186,8 @@ public class UserServiceImpl implements UserService {
         //update with changes
         property.setTitle(title);
         property.setPrice(price);
-        property.setDescription(location);
-        property.setLocation(description);
+        property.setDescription(description);
+        property.setLocation(location);
         property.setSize(size);
         property.setSize(size);
 
@@ -235,9 +201,14 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new PropertyNotFoundException("Property with id {"+id+"} not found"));
 
         //check if message sent
-        if (messageRepository.existsByProperty(property)) {
+        if (messageRepository.existsBySenderAndProperty(getCurrentUserContext().user(), property)) {
             model.addAttribute("messageSent",true);
         }
+        else {
+            model.addAttribute("messageSent",false);
+            model.addAttribute("message", new Message());
+        }
+
         //check if favorited
         User user = getCurrentUserContext().user();
         if (favoriteRepository.existsByUserAndProperty(user, property)) {
@@ -251,24 +222,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void sendMessage(Long id, String message) {
+    public void sendMessage(Long id, Message message) {
         Property property = propertyRepository.findById(id)
                 .orElseThrow(() -> new PropertyNotFoundException("Property with id {"+id+"} not found"));
 
-        User buyer = getCurrentUserContext().user();
-        Message newMessage = new Message(message, property, buyer);
-        messageRepository.save(newMessage);
+        User sender = getCurrentUserContext().user();
+        message.setProperty(property);
+        message.setSender(sender);
+        message.setTimestamp(LocalDateTime.now());
+        validMessage(message);
+        messageRepository.save(message);
 
-        property.addMessage(newMessage);
+        property.addMessage(message);
         propertyRepository.save(property);
     }
 
+   @Override
+    public void prepareBrowsePropertiesModel(Model model) {
+        model.addAttribute("properties", propertyRepository.findAll());
+   }
     @Override
     public void prepareManagedListingsModel(Model model) {
         User agent = getCurrentUserContext().user();
         List<Property> properties = propertyRepository.findAllByAgent(agent);
 
-        model.addAttribute("role",agent.getRoles());
+        model.addAttribute("role", agent.getRoles());
         model.addAttribute("properties", properties);
     }
     @Override
@@ -289,8 +267,11 @@ public class UserServiceImpl implements UserService {
             model.addAttribute("isAgent", true);
         }
         model.addAttribute("message", message);
+        model.addAttribute("replyMessage", new Message());
 
     }
+
+
 
     @Override
     public void prepareEditPropertyModel(Long id, Model model, boolean err){
@@ -309,15 +290,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void postMessageReply(Long id, String reply) {
-        //Get message w/o reply
-        Message message = messageRepository.getById(id);
-        //Set reply
-        message.setReply(reply);
-        //Save message with reply to db
-        messageRepository.save(message);
+    public void postMessageReply(Long id, Message message) {
+        //make sure reply is not blank
+        if (!message.getReply().isEmpty()) {
+            //Save message with reply to db
+            Message oldMessage = messageRepository.findById(id)
+                    .orElseThrow(() -> new NotFoundException("Message not found"));
+            oldMessage.setReply(message.getReply());
+            messageRepository.save(oldMessage);
+        }
     }
 
+    @Override
+    public void deleteMessage(Long id){
+        messageRepository.deleteById(id);
+    }
 
   public void prepareMessagesModel(Model model) {
         List<Message> messages = new ArrayList<Message>();
@@ -436,6 +423,12 @@ public class UserServiceImpl implements UserService {
     public void validPrice(double price) {
         if (price <= 0) {
             throw new InvalidPropertyParameterException("Price must be greater than 0");
+        }
+        String[] splitDouble = Double.toString(price).split("\\.");
+        if (splitDouble.length > 1) {
+            if (splitDouble[1].length() > 2) {
+                throw new InvalidPropertyParameterException("Price must have 2 decimal places or less");
+            }
         }
     }
 

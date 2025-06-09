@@ -11,16 +11,25 @@
             <button class="btn">← Dashboard</button>
         </a>
     </p>
-    <div class="property-container">
-        Property: <h2 th:text="${message.property.title}"></h2>
-        From: <h2 th:text="${message.sender.firstName}"></h2><h2 th:text="${message.sender.lastName}"></h2>
-        <p th:text="${message.content}"></p>
+    <div class="property-container" style="display:flex; flex-direction:column; align-items: center">
+        <b>Regarding the property at: <h2 th:text="${message.property.title}"></h2></b>
+        <div class="message">
+            <b th:text="${message.sender.firstName}"></b>
+            <b th:text="${message.sender.lastName}"></b>
+            <b> : </b>
+            <p th:text="${message.content}"></p>
+        </div>
+        <div th:if="${message.reply}" class="message">
+            <b>Agent Reply: </b>
+            <p th:text="${message.reply}"></p>
+        </div>
         <p th:text="${message.timestamp}"></p>
-
-        <form th:if="${isAgent}" th:action="@{/agent/message/reply(id=${message.id})}" method="post">
-            <label>Reply: <input name="reply"/></label><br>
-            <button type="submit" class="btn">Send</button>
-        </form>
+        <div th:unless="${message.reply}">
+            <form th:if="${isAgent}" th:action="@{/agent/message/reply(id=${message.id})}" th:object="${replyMessage}" method="post">
+                <label>Reply: <input id="reply" th:field="*{reply}" type="text"/></label><br>
+                <button type="submit" class="btn">Send</button>
+            </form>
+        </div>
     </div>
 </body>
 </html>

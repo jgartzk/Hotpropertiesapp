@@ -1,5 +1,6 @@
 package edu.hotproperties.final_project.controller;
 
+import edu.hotproperties.final_project.entities.Message;
 import edu.hotproperties.final_project.enums.Role;
 import edu.hotproperties.final_project.entities.Property;
 import edu.hotproperties.final_project.services.AuthService;
@@ -8,6 +9,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +32,11 @@ public class AuthController {
 
     @GetMapping({"/", ""})
     public String loginRedirect() {
+        return "redirect:/login";
+    }
+
+    @GetMapping("/error")
+    public String errorRedirect () {
         return "redirect:/login";
     }
 
@@ -86,8 +93,13 @@ public class AuthController {
 
     @GetMapping("/profile")
     public String viewProfile(Model model) {
-        userService.prepareProfileModel(model);
-        return "profile";
+        try {
+            userService.prepareProfileModel(model);
+            return "profile";
+        }
+        catch (UsernameNotFoundException e) {
+            return "redirect:/login";
+        }
     }
 
     @GetMapping("/profile/edit")
@@ -109,6 +121,9 @@ public class AuthController {
             userService.postEditProfile(firstName, lastName, email);
             return "redirect:/profile";
         }
+        catch (UsernameNotFoundException e){
+            return "redirect:/login";
+        }
         catch (Exception e){
             return "redirect:/profile/edit?err=true";
         }
@@ -125,7 +140,7 @@ public class AuthController {
     @GetMapping("/buyer/properties/list")
     @PreAuthorize("hasRole('BUYER')")
     public String properties(Model model) {
-        model.addAttribute("properties", userService.getProperties());
+        userService.prepareBrowsePropertiesModel(model);
         return "browse_properties";
     }
 
@@ -166,7 +181,7 @@ public class AuthController {
     @PostMapping("buyer/message")
     //@PreAuthorize("hasRole('BUYER')")
     public String contactAgent(@RequestParam(required = true) Long id,
-                               @RequestParam(required = true) String message)
+                               @ModelAttribute Message message)
     {
         userService.sendMessage(id, message);
         return "redirect:/buyer/properties/view?id=" + id;
@@ -202,15 +217,15 @@ public class AuthController {
     @PostMapping("/agent/new_property")
     public String createProperty(@RequestParam(required = true) String title,
                                  @RequestParam(required = true) String price,
-                                 @RequestParam(required = true) String location,
                                  @RequestParam(required = true) String description,
+                                 @RequestParam(required = true) String location,
                                  @RequestParam(required = true) String size
                                 )
     {
         try {
             double priceDbl = Double.parseDouble(price);
             int sizeInt = Integer.parseInt(size);
-            userService.createProperty(new Property(title, priceDbl, location, description, sizeInt));
+            userService.createProperty(new Property(title, priceDbl, description, location, sizeInt));
             return "redirect:/agent/manage_listings";
         }
         catch (Exception e) {
@@ -225,14 +240,14 @@ public class AuthController {
     public String editProperty(@RequestParam(name="id") Long id,
                                @RequestParam(required = true) String title,
                                @RequestParam(required = true) String price,
-                               @RequestParam(required = true) String location,
                                @RequestParam(required = true) String description,
+                               @RequestParam(required = true) String location,
                                @RequestParam(required = true) String size
                                ) {
         try {
             double priceDbl = Double.parseDouble(price);
             int sizeInt = Integer.parseInt(size);
-            userService.updateProperty(id, title, priceDbl, location, description, sizeInt); //returns updated property
+            userService.updateProperty(id, title, priceDbl, description, location, sizeInt); //returns updated property
             return "redirect:/agent/manage_listings";
         }
         catch (Exception e){
@@ -261,11 +276,19 @@ public class AuthController {
     //Agent replies to buyer messages
     @PostMapping("/agent/message/reply")
     @PreAuthorize("hasRole('AGENT')")
-    public String viewMessage(@RequestParam(name="id") Long id, @RequestBody String reply) {
+    public String postMessage(@RequestParam(name="id") Long id, @ModelAttribute Message message) {
         //User adds sender info and message to screen
-        userService.postMessageReply(id, reply);
+        userService.postMessageReply(id, message);
         return "redirect:/message?id=" + id;
     }
+
+    @GetMapping("/message/delete")
+    public String postMessage(@RequestParam(name="id") Long id) {
+        //User adds sender info and message to screen
+        userService.deleteMessage(id);
+        return "redirect:/messages";
+    }
+
 
     //ADMIN FUNCTIONALITY
     @GetMapping("/admin/users")

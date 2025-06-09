@@ -22,6 +22,7 @@
         <h2 th:text="${message.property.title}"></h2>
         <h4 th:text="${message.timestamp}"></h4>
         <a class="btn" th:href="@{/message(id=${message.id})}">View Message</a>
+        <a class="btn-delete" th:href="@{/message/delete(id=${message.id})}">Delete</a>
     </div>
 </body>
 </html>

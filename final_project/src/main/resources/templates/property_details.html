@@ -15,18 +15,22 @@
 </div>
     <h1 th:text="${property.title}"></h1>
     <div class="details-header">
-        <b>Price: </b><p th:text="${property.price}"></p>
+        <b>Price: </b><p th:text="${#numbers.formatCurrency(property.price)}"></p>
         <b>Location: </b><p th:text="${property.location}"></p>
         <b>Size: </b><p th:text="${property.size}"></p>
     </div>
     <div class="details-card">
         <div style="display:flex;flex-direction:column;">
-            <div class="details-image">
-                <p>Image list goes here</p>
+
+            <div class="details-image-list">
+                <div th:unless="${property.images.empty}" th:each="image : ${property.images}">
+                    <img th:attr="onclick=|popup(${image.id})|" th:src="@{'/propertyimages/' + ${property.title} + '/' + ${image.getImageFilename()}}" alt="Property Image" class="details-image"/>
+                </div>
+
+                <img th:if="${property.images.empty}" th:src="@{'/propertyimages/default.jpg'}" alt="Property Image" class="details-image"/>
             </div>
 
             <div class="details-contact">
-                <h3><b>Favorite this property?</b></h3>
                 <p th:if="${favorited}" style="color:green;">You have favorited this property.</p>
                 <a th:if="${favorited}" class="btn" th:href="@{/buyer/favorites}">View Favorites</a>
 
@@ -42,11 +46,12 @@
                     <p style="color:green;">Message sent to agent.</p>
                     <a class="btn" th:href="@{/messages}">View Messages</a>
                 </div>
-                <form th:unless="${messageSent}" th:action="@{/buyer/message(id=${id})}" method="post">
-                    <label>Message: <input style="width:400px;" name="message"/></label><br>
+                <form th:unless="${messageSent}" th:action="@{/buyer/message(id=${id})}" th:object="${message}" method="post">
+                    <label>Message: <input style="width:400px;" th:field="*{content}" type="text" required=""/></label><br>
                     <button type="submit" class="btn">Send</button>
                 </form>
             </div>
+
         </div>
 
         <div class="details-column">
@@ -54,5 +59,25 @@
             <p th:text="${property.description}"></p>
         </div>
     </div>
+
+<!-- IMAGE VIEWER -->
+<div th:each="image : ${property.images}">
+    <div class="popup" th:attr="id=${image.id}" style="display:none;">
+        <img class="popup-image" th:attr="onclick=|hidePopup(${image.id})|" th:src="@{'/propertyimages/' + ${property.title} + '/' + ${image.getImageFilename()}}" alt="Property Image"/>
+    </div>
+</div>
+
+
+<script>
+    function popup(imageId) {
+        console.log(imageId)
+        document.getElementById(imageId).style.display = "flex";
+    }
+
+    function hidePopup(imageId) {
+        document.getElementById(imageId).style.display = "none";
+    }
+</script>
+
 </body>
 </html>
