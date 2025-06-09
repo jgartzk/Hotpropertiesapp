@@ -31,9 +31,12 @@
             </div>
 
             <div class="details-contact">
-                <p th:if="${favorited}" style="color:green;">You have favorited this property.</p>
-                <a th:if="${favorited}" class="btn" th:href="@{/buyer/favorites}">View Favorites</a>
-
+                <a th:if="${favorited}" th:href="@{/buyer/favorites}" style="text-decoration:none;">
+                    <button class="btn" th:value="${id}">View Favorites</button>
+                </a>
+                <a th:if="${favorited}" th:href="@{/buyer/favorites/remove(id=${id})}" style="text-decoration:none;">
+                    <button class="btn-delete" th:value="${id}">Remove from favorites</button>
+                </a>
                 <form th:unless="${favorited}" th:action="@{/buyer/favorites/add(id=${id})}" method="post">
                     <button class="btn" th:value="${id}">Add to Favorites</button>
                 </form>

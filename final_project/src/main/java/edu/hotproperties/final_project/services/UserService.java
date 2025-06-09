@@ -18,7 +18,6 @@ public interface UserService {
     void prepareProfileModel(Model model);
 
 
-    @PreAuthorize("hasRole('ADMIN')")
     User registerNewUser(User user, Role role);
 
     User getCurrentUser();

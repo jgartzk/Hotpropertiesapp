@@ -29,7 +29,6 @@ public class AuthController {
         this.userService = userService;
     }
 
-
     @GetMapping({"/", ""})
     public String loginRedirect() {
         return "redirect:/login";
@@ -60,8 +59,8 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/logout")
     @PreAuthorize("isAuthenticated()")
+    @GetMapping("/logout")
     public String logout(HttpServletResponse response) {
         authService.clearJwtCookie(response);
         return "redirect:/login";
@@ -91,6 +90,7 @@ public class AuthController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('BUYER', 'AGENT', 'ADMIN')")
     @GetMapping("/profile")
     public String viewProfile(Model model) {
         try {
@@ -103,7 +103,7 @@ public class AuthController {
     }
 
     @GetMapping("/profile/edit")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAnyRole('BUYER', 'AGENT', 'ADMIN')")
     public String editProfile(@RequestParam(required = false) boolean err,
                               Model model){
         userService.prepareEditProfileModel(model, err);
@@ -111,7 +111,7 @@ public class AuthController {
     }
 
     @PostMapping("/profile/edit")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAnyRole('BUYER', 'AGENT', 'ADMIN')")
     public String editProfile(
                               @RequestParam(required = false) String firstName,
                               @RequestParam(required = false) String lastName,
@@ -129,28 +129,29 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/dashboard")
     @PreAuthorize("hasAnyRole('BUYER', 'AGENT', 'ADMIN')")
+    @GetMapping("/dashboard")
     public String dashboard(Model model) {
         userService.prepareDashboardModel(model);
         return "dashboard";
     }
 
     //BUYER FUNCTIONALITY
-    @GetMapping("/buyer/properties/list")
     @PreAuthorize("hasRole('BUYER')")
+    @GetMapping("/buyer/properties/list")
     public String properties(Model model) {
         userService.prepareBrowsePropertiesModel(model);
         return "browse_properties";
     }
 
-    @GetMapping("/buyer/properties/view")
     @PreAuthorize("hasRole('BUYER')")
+    @GetMapping("/buyer/properties/view")
     public String viewing(@RequestParam(required = true) Long id, Model model) {
         userService.preparePropertyView(id, model);
         return "property_details";
     }
 
+    @PreAuthorize("hasRole('BUYER')")
     @GetMapping("/buyer/favorites")
     //@PreAuthorize("hasRole('BUYER')")
     public String favorites(Model model) {
@@ -158,6 +159,7 @@ public class AuthController {
         return "favorites";
     }
 
+    @PreAuthorize("hasRole('BUYER')")
     @GetMapping("/buyer/favorites/remove")
     //@PreAuthorize("hasRole('BUYER')")
     public String removeFavorite(@RequestParam (required = true) Long id) {
@@ -165,6 +167,7 @@ public class AuthController {
         return "redirect:/buyer/favorites";
     }
 
+    @PreAuthorize("hasRole('BUYER')")
     @PostMapping("/buyer/favorites/add")
     //@PreAuthorize("hasRole('BUYER')")
     public String addFavorite(@RequestParam(required = true) Long id) {
@@ -177,7 +180,7 @@ public class AuthController {
             return "redirect:/buyer/properties/view?id="+id;
         }
     }
-
+    @PreAuthorize("hasRole('BUYER')")
     @PostMapping("buyer/message")
     //@PreAuthorize("hasRole('BUYER')")
     public String contactAgent(@RequestParam(required = true) Long id,
@@ -187,6 +190,7 @@ public class AuthController {
         return "redirect:/buyer/properties/view?id=" + id;
     }
 
+    @PreAuthorize("hasAnyRole('BUYER','AGENT')")
     @GetMapping("/messages")
     //@PreAuthorize("hasRole('BUYER')")
     public String viewBuyerMessages(Model model) {
@@ -194,6 +198,7 @@ public class AuthController {
         return "messages";
     }
 
+    @PreAuthorize("hasAnyRole('BUYER','AGENT')")
     @GetMapping("/message")
     //@PreAuthorize("hasRole('BUYER')")
     public String viewBuyerMessages(@RequestParam(required=true) Long id, Model model) {
@@ -202,10 +207,9 @@ public class AuthController {
     }
 
 
-
     //AGENT FUNCTIONALITY
 
-    //Create new property -- get form/screen
+    @PreAuthorize("hasRole('AGENT')")
     @GetMapping("/agent/new_property")
     public String addPropertyForm(@RequestParam(required = false) boolean err,
                                   Model model) {
@@ -213,7 +217,7 @@ public class AuthController {
         return "new_property";
     }
 
-    //Post new property
+    @PreAuthorize("hasRole('AGENT')")
     @PostMapping("/agent/new_property")
     public String createProperty(@RequestParam(required = true) String title,
                                  @RequestParam(required = true) String price,
@@ -233,10 +237,8 @@ public class AuthController {
         }
     }
 
-    //Get existing property by id and update it
-
+    @PreAuthorize("hasRole('AGENT')")
     @PostMapping("/agent/edit_listing")
-    //@PreAuthorize("hasRole('AGENT')")
     public String editProperty(@RequestParam(name="id") Long id,
                                @RequestParam(required = true) String title,
                                @RequestParam(required = true) String price,
@@ -255,6 +257,7 @@ public class AuthController {
         }
     }
 
+    @PreAuthorize("hasRole('AGENT')")
     @GetMapping("/agent/edit_listing")
     //@PreAuthorize("hasRole('AGENT')")
     public String prepareEditPropertyModel(@RequestParam(name="id") Long id,
@@ -265,7 +268,7 @@ public class AuthController {
         return "edit_listing";
     }
 
-    //Returns a list of properties managed by the agent (current user)
+    @PreAuthorize("hasRole('AGENT')")
     @GetMapping("/agent/manage_listings")
     public String getManagedProperties(Model model) {
         userService.prepareManagedListingsModel(model);
@@ -273,22 +276,33 @@ public class AuthController {
     }
 
 
-    //Agent replies to buyer messages
-    @PostMapping("/agent/message/reply")
     @PreAuthorize("hasRole('AGENT')")
+    @PostMapping("/agent/message/reply")
     public String postMessage(@RequestParam(name="id") Long id, @ModelAttribute Message message) {
         //User adds sender info and message to screen
         userService.postMessageReply(id, message);
         return "redirect:/message?id=" + id;
     }
 
-    @GetMapping("/message/delete")
+    @PreAuthorize("hasRole('AGENT')")
+    @GetMapping("/agent/message/delete")
     public String postMessage(@RequestParam(name="id") Long id) {
-        //User adds sender info and message to screen
-        userService.deleteMessage(id);
-        return "redirect:/messages";
+        try {
+            //User adds sender info and message to screen
+            userService.deleteMessage(id);
+            return "redirect:/messages";
+        }
+        catch (Exception e) {
+            return "redirect:/messages";
+        }
     }
 
+    @PreAuthorize("hasRole('AGENT')")
+    @GetMapping("/agent/delete_listing")
+    public String deleteListing(@RequestParam(required = true) Long id) {
+        userService.deleteListing(id);
+        return "redirect:/agent/manage_listings";
+    }
 
     //ADMIN FUNCTIONALITY
     @GetMapping("/admin/users")
@@ -297,18 +311,14 @@ public class AuthController {
         return "user_list";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/users/delete")
     public String deleteUser(@RequestParam(required = true) Long id) {
         userService.deleteUser(id);
         return "redirect:/admin/users";
     }
 
-    @GetMapping("/agent/delete_listing")
-    public String deleteListing(@RequestParam(required = true) Long id) {
-        userService.deleteListing(id);
-        return "redirect:/agent/manage_listings";
-    }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/create_agent")
     public String createAgent(@RequestParam(required = false) boolean err,
                               Model model) {
@@ -319,6 +329,8 @@ public class AuthController {
         return "new_agent";
     }
 
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/admin/create_agent")
     public String createAgent(@ModelAttribute("user") User user) {
         try {

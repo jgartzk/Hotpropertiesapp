@@ -21,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
 import java.time.LocalDateTime;
@@ -139,19 +140,21 @@ public class UserServiceImpl implements UserService {
         favoriteRepository.save(favorite);
     }
 
+    @Transactional
     @Override
     public void removeFavorite(Long id) {
         Property property = propertyRepository.findById(id)
                 .orElseThrow(() -> new PropertyNotFoundException("Property with id {"+id+"} not found"));
         Favorite favorite = favoriteRepository.findByUserAndProperty(getCurrentUserContext().user(), property);
-        favoriteRepository.deleteById(favorite.getId());
+        favoriteRepository.delete(favorite);
     }
 
+    @Transactional
     @Override
     public void deleteListing(Long id) {
         Property property = propertyRepository.findById(id)
                 .orElseThrow(() -> new PropertyNotFoundException("Property with id {"+id+"} not found"));
-        propertyRepository.deleteById(property.getId());
+        propertyRepository.delete(property);
     }
 
 
@@ -301,9 +304,13 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Transactional
     @Override
     public void deleteMessage(Long id){
-        messageRepository.deleteById(id);
+
+        Message message = messageRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Message Not Found"));
+        messageRepository.delete(message);
     }
 
   public void prepareMessagesModel(Model model) {
@@ -335,6 +342,7 @@ public class UserServiceImpl implements UserService {
         model.addAttribute("users", users);
     }
 
+    @Transactional
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
